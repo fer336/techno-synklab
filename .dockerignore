@@ -1,0 +1,9 @@
+.venv
+__pycache__
+*.pyc
+.playwright-mcp
+.atl
+.git
+*.png
+*.log
+tests

@@ -1,0 +1,14 @@
+# docker compose up -d   ->  http://localhost:8000
+services:
+  synklab:
+    build: .
+    image: synklab:latest
+    container_name: synklab
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8000:8000"   # keep it on loopback: the agent and download endpoints are local-only
+    environment:
+      MUSICBRAINZ_USER_AGENT: "${MUSICBRAINZ_USER_AGENT:-SynkLab/0.2 (set-your-contact@example.com)}"
+    volumes:
+      - "${SYNKLAB_INBOX:-./inbox}:/data/inbox"
+    user: "${SYNKLAB_UID:-1000}:${SYNKLAB_GID:-1000}"
