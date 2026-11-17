@@ -24,7 +24,8 @@ SYNK//LAB es un prototipo local con diseño *Dark Lime Cyberpunk*, hecho con HTM
 - **Agente de IA opcional:** una CLI donde ya tienes sesión (Claude o Codex) decide duración, EQ, efecto y filtro de cada transición. No usa claves de API. [Ver flujo](#flujo-del-agente).
 - **Catálogo:** búsqueda de metadatos en MusicBrainz (por texto, no por sonido), sellos y lanzamientos.
 - **Descarga opcional** de enlaces de YouTube o SoundCloud con `yt-dlp` y `ffmpeg`, siempre por orden tuya y solo en local.
-- Diseño responsivo, sin cuentas ni base de datos. El set se guarda en el navegador y se exporta como JSON o CSV.
+- **Versión móvil** (hasta 770 px): interfaz propia con cinco pantallas (Mezcla, Cola, Importar, Agente y Ajustes) pensada para usarse con una mano. Durante una mezcla se ven los dos decks a la vez. Descubrir, Analizador, Sets y Sellos siguen disponibles desde *Ajustes › Más herramientas*.
+- Sin cuentas ni base de datos. El set se guarda en el navegador y se exporta como JSON o CSV.
 
 > Los archivos de audio se procesan **en tu navegador** y nunca se suben a ningún servidor.
 
@@ -151,7 +152,7 @@ Cada deck tiene su propia copia de la cadena. Los efectos se envían **después 
 ├── downloader.py        # descargas opcionales con yt-dlp
 ├── netguard.py          # comprobaciones de "solo local"
 ├── dj_agent.py          # agente DJ (claude / codex / reglas)
-├── static/              # index.html + mixer.js (todo el audio)
+├── static/              # index.html + mixer.js (audio) + mobile.js/css (interfaz móvil)
 ├── docs/                # diagramas interactivos y SVG animados
 │   └── tools/           # generador de los diagramas
 ├── tests/               # pruebas del guard de red
