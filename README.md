@@ -88,7 +88,9 @@ synklab-agent --provider claude --start --style "hipnótico, mezclas largas"
 
 ## Cómo funciona
 
-> 🖱️ **[Abre la versión interactiva](https://fer336.github.io/techno-synklab/arquitectura.html)**: toca los bloques, recorre el flujo del agente paso a paso y mueve la mezcla con un deslizador.
+> 🖱️ **[Abre la versión interactiva](https://fer336.github.io/techno-synklab/arquitectura.html)**: toca los bloques para ver sus conexiones y qué hace cada módulo, recorre el flujo del agente paso a paso y mueve la mezcla con un deslizador.
+>
+> **¿Por qué hay dos versiones?** GitHub no ejecuta JavaScript dentro del README, así que aquí los diagramas son SVG animados (se ven solos, pero no responden al clic). La versión interactiva es una página estática (`docs/arquitectura.html`) publicada con **GitHub Pages** desde la carpeta `docs/` de la rama `main`: se actualiza sola con cada push y no necesita servidor propio. También puedes abrirla sin conexión: `python3 -m http.server -d docs 8099` y entra a http://localhost:8099/arquitectura.html.
 
 ### Arquitectura
 
@@ -172,6 +174,8 @@ Cada deck tiene su propia copia de la cadena. Los efectos se envían **después 
 python3 -m unittest discover -s tests        # pruebas del guard de red
 python3 docs/tools/build_diagrams.py .       # regenera docs/img/*.svg y docs/arquitectura.html
 ```
+
+Tras regenerar, haz commit de `docs/` y push a `main`: GitHub Pages republica la página interactiva en menos de un minuto. Los SVG del README se actualizan con el mismo commit.
 
 Los diagramas siguen la gramática editorial de [diagram-design](https://github.com/cathrynlavery/diagram-design) (MIT): sin sombras, bordes finos, conectores ortogonales y uno o dos nodos de acento.
 
