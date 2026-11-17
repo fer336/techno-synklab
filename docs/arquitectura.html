@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SYNK//LAB · Arquitectura interactiva</title>
+<meta name="description" content="Diagramas interactivos de SYNK//LAB: arquitectura, flujo del agente DJ, mezcla por frases y cadena de audio.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080b0b;--card:#0f1413;--ink:#edf1e9;--muted:#a3aea6;--soft:#7f8b84;--line:#26302b;--line2:#3a4640;--lime:#caff1a;--link:#8ab4e8}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 'DM Sans',system-ui,sans-serif}
+a{color:inherit}
+code{font:500 .86em 'DM Mono',ui-monospace,monospace;background:#151c19;border:1px solid var(--line);padding:1px 6px;border-radius:4px;color:#dfe7de}
+header.top{position:sticky;top:0;z-index:5;background:rgba(8,11,11,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1080px;margin:0 auto;padding:0 20px;height:54px;display:flex;align-items:center;gap:22px}
+.brand{font:800 22px 'Barlow Condensed','Arial Narrow',Impact,sans-serif;letter-spacing:-.3px;text-decoration:none;white-space:nowrap}
+.brand span{color:var(--lime)}
+nav.top-nav{display:flex;gap:4px;margin-left:auto;overflow:auto}
+nav.top-nav a{font:500 11.5px 'DM Mono',ui-monospace,monospace;letter-spacing:.06em;color:var(--soft);text-decoration:none;padding:7px 10px;border-radius:6px;white-space:nowrap;text-transform:uppercase}
+nav.top-nav a:hover,nav.top-nav a:focus-visible{color:var(--ink);background:#0d1310;outline:none}
+main{max-width:1080px;margin:0 auto;padding:0 20px 80px}
+.hero{padding:54px 0 18px}
+.eyebrow{font:500 11px 'DM Mono',ui-monospace,monospace;letter-spacing:.16em;color:var(--lime);text-transform:uppercase}
+h1{font:800 clamp(44px,8vw,84px)/.92 'Barlow Condensed','Arial Narrow',Impact,sans-serif;margin:10px 0 14px;letter-spacing:-1px}
+h1 span{color:var(--lime)}
+.lead{color:var(--muted);max-width:68ch;margin:0}
+section{padding:54px 0 6px;border-top:1px solid var(--line);margin-top:42px}
+h2{font:800 clamp(30px,5vw,44px)/1 'Barlow Condensed','Arial Narrow',Impact,sans-serif;margin:8px 0 10px}
+section>p.intro{color:var(--muted);max-width:70ch;margin:0 0 22px}
+.fig{border:1px solid var(--line);border-radius:10px;background:#080b0b;padding:8px;overflow:hidden}
+.fig svg{display:block;width:100%;height:auto}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0 0}
+.btn{font:500 12px 'DM Mono',ui-monospace,monospace;letter-spacing:.05em;color:var(--ink);background:var(--card);border:1px solid var(--line2);border-radius:6px;padding:8px 13px;cursor:pointer;transition:border-color .15s,color .15s,background .15s}
+.btn:hover{border-color:var(--lime);color:var(--lime)}
+.btn:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
+.btn.primary{background:var(--lime);color:#10160d;border-color:var(--lime);font-weight:500}
+.btn.primary:hover{background:#d8ff4d;color:#10160d}
+.btn[disabled]{opacity:.4;cursor:default}
+.hint{font:400 12px 'DM Mono',ui-monospace,monospace;color:var(--soft);margin-left:auto}
+.panel{margin-top:14px;border:1px solid var(--line);border-left:2px solid var(--lime);border-radius:8px;background:var(--card);padding:16px 18px;min-height:112px}
+.panel h3{margin:0 0 2px;font:800 22px 'Barlow Condensed','Arial Narrow',Impact,sans-serif;letter-spacing:.2px}
+.panel .where{font:400 12px 'DM Mono',ui-monospace,monospace;color:var(--soft);margin-bottom:8px}
+.panel p{margin:0;color:var(--muted);max-width:75ch}
+.panel.idle p{color:var(--soft)}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px}
+.ro{border:1px solid var(--line);border-radius:8px;background:var(--card);padding:10px 14px}
+.ro b{display:block;font:800 30px/1 'Barlow Condensed','Arial Narrow',Impact,sans-serif}
+.ro small{font:400 11px 'DM Mono',ui-monospace,monospace;color:var(--soft);letter-spacing:.06em;text-transform:uppercase}
+.ro.lime b{color:var(--lime)}
+label.sw{display:inline-flex;align-items:center;gap:8px;font:500 12px 'DM Mono',ui-monospace,monospace;color:var(--muted);cursor:pointer}
+label.sw input{accent-color:var(--lime)}
+input[type=range]{accent-color:var(--lime);flex:1 1 220px;min-width:180px}
+.step-cap{margin-top:14px;border:1px solid var(--line);border-radius:8px;background:var(--card);padding:14px 18px;color:var(--muted);min-height:64px}
+.step-cap b{font:500 12px 'DM Mono',ui-monospace,monospace;color:var(--lime);letter-spacing:.1em;margin-right:8px}
+footer{max-width:1080px;margin:0 auto;padding:28px 20px 60px;border-top:1px solid var(--line);color:var(--soft);font:400 12px 'DM Mono',ui-monospace,monospace}
+
+/* diagram interactivity */
+.n.is-pick{cursor:pointer}
+.n.is-pick:hover rect,.n.is-pick:focus-visible rect{stroke:#9aa79f}
+.n:focus,.n:focus-visible{outline:none}
+.n:focus-visible rect{stroke:var(--lime);stroke-width:2}
+svg.has-active .n:not(.is-active){opacity:.42}
+svg.has-active .e:not(.rel){opacity:.3}
+svg.has-active .al-g:not(.rel){opacity:.3}
+.n.is-active rect{stroke:var(--lime);stroke-width:2}
+svg .e.rel{stroke:var(--lime)!important;stroke-width:1.8;opacity:1}
+.n,.e,.al-g{transition:opacity .18s}
+/* sequence: static-first, JS enhances */
+svg.motion-ready .msg{transition:opacity .35s}
+svg.motion-ready .msg.off{opacity:.12}
+svg.motion-ready .msg.now .e{stroke:var(--lime);stroke-width:1.9}
+svg.motion-ready .msg.now .al{fill:var(--ink)}
+/* mix */
+#mx-B{transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+#mx-win,#mx-skip{transition:x .5s cubic-bezier(.2,.8,.2,1),width .5s cubic-bezier(.2,.8,.2,1)}
+@media (prefers-reduced-motion:reduce){#mx-B,#mx-win,#mx-skip,svg.motion-ready .msg,.n,.e,.al-g{transition:none}}
+@media (max-width:640px){.hint{margin-left:0;width:100%}.top-in{gap:10px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <a class="brand" href="#top">SYNK<span>//</span>LAB</a>
+  <nav class="top-nav" aria-label="Secciones">
+    <a href="#arquitectura">Arquitectura</a><a href="#agente">Agente</a><a href="#mezcla">Mezcla</a><a href="#audio">Audio</a>
+  </nav>
+</div></header>
+<main id="top">
+  <div class="hero">
+    <div class="eyebrow">Documentación interactiva</div>
+    <h1>CÓMO FUNCIONA <span>SYNK//LAB</span></h1>
+    <p class="lead">Cuatro diagramas para entender el sistema. Toca los bloques, recorre los pasos del agente y mueve la mezcla a mano. Esta página es estática: no necesita servidor.</p>
+  </div>
+
+  <section id="arquitectura">
+    <div class="eyebrow">01 · Arquitectura</div>
+    <h2>Tres piezas locales</h2>
+    <p class="intro">La pestaña del navegador es la única que suena. El servidor la acompaña y hace de puente. El agente DJ es opcional y consulta a una CLI de IA donde ya tienes sesión iniciada.</p>
+    <div class="fig" id="fig-arch"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 590" width="1000" height="590" role="img" aria-labelledby="pt pd" font-family="system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif"><title id="pt">Arquitectura de SYNK//LAB</title><desc id="pd">El navegador reproduce y mezcla; el servidor FastAPI sirve la app y hace de puente; el agente DJ opcional decide cada transición consultando a una CLI de IA.</desc><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1,1 L9,5 L1,9" fill="none" stroke="context-stroke" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></marker><style>
+.bg{fill:#080b0b}
+.zone{fill:rgba(237,241,233,.02);stroke:rgba(237,241,233,.11);stroke-width:.8}
+.zl{font:500 8.5px ui-monospace,'SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;letter-spacing:.14em;fill:#7f8b84}
+.n rect{fill:#0f1413;stroke:#3a4640;stroke-width:1}
+.n.focal rect{fill:rgba(202,255,26,.08);stroke:#caff1a;stroke-width:1.4}
+.n.ext rect,.n.opt rect{stroke-dasharray:4 3}
+.n{cursor:default}
+.div{stroke:rgba(237,241,233,.10);stroke-width:1}
+.nn{font:600 13px system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;fill:#edf1e9}
+.ns{font:400 10px ui-monospace,'SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;fill:#a3aea6}
+.e{fill:none;stroke:#7f8b84;stroke-width:1.2}
+.e.link{stroke:#8ab4e8}
+.e.dash{stroke-dasharray:4 3;stroke-width:1}
+.alm{fill:#080b0b}
+.al{font:400 9px ui-monospace,'SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;letter-spacing:.04em;fill:#a3aea6}
+.eb{font:500 8.5px ui-monospace,'SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;letter-spacing:.16em;fill:#7f8b84}
+.tit{font:400 22px Georgia,'Times New Roman',serif;fill:#edf1e9}
+.sub{font:400 11px ui-monospace,'SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;fill:#a3aea6}
+.note{font:italic 400 13px Georgia,'Times New Roman',serif;fill:#a3aea6}
+@media (prefers-reduced-motion:reduce){.tok{display:none}}
+ar</style></defs><rect class="bg" width="1000" height="590"/><text class="eb" x="32" y="34">ARQUITECTURA</text><text class="tit" x="32" y="62">Cómo está armado</text><text class="sub" x="32" y="82">Tres piezas locales: la pestaña que suena, el servidor que la acompaña y un agente opcional.</text><rect class="zone" x="24" y="112" width="330" height="452" rx="8"/><rect class="alm" x="36" y="105" width="59" height="14" rx="2"/><text class="zl" x="42" y="115">TU EQUIPO</text><rect class="zone" x="420" y="112" width="290" height="452" rx="8"/><rect class="alm" x="432" y="105" width="102" height="14" rx="2"/><text class="zl" x="438" y="115">CONTENEDOR DOCKER</text><path id="a-ui" class="e link" d="M330,184 H444" marker-end="url(#ah)"/><g class="al-g" data-edge="a-ui"><rect class="alm" x="345.7" y="176" width="82.5" height="14" rx="2"/><text class="al" x="387" y="187" text-anchor="middle">UI + catálogo</text></g><path id="a-poll" class="e link dash" d="M330,220 H444" marker-end="url(#ah)"/><g class="al-g" data-edge="a-poll"><rect class="alm" x="342.9" y="212" width="88.1" height="14" rx="2"/><text class="al" x="387" y="223" text-anchor="middle">poll · eventos</text></g><path id="a-cmd" class="e link" d="M330,307 H444" marker-end="url(#ah)"/><g class="al-g" data-edge="a-cmd"><rect class="alm" x="337.4" y="299" width="99.3" height="14" rx="2"/><text class="al" x="387" y="310" text-anchor="middle">command · events</text></g><path id="a-cli" class="e " d="M189,339 V460" marker-end="url(#ah)"/><g class="al-g" data-edge="a-cli"><rect class="alm" x="147.7" y="392" width="82.5" height="14" rx="2"/><text class="al" x="189" y="403" text-anchor="middle">prompt → JSON</text></g><path id="a-dl" class="e dash" d="M565,410 V460" marker-end="url(#ah)"/><g class="al-g" data-edge="a-dl"><rect class="alm" x="512.6" y="427" width="104.9" height="14" rx="2"/><text class="al" x="565" y="438" text-anchor="middle">opt-in por enlace</text></g><path id="a-mb" class="e " d="M686,196 H770" marker-end="url(#ah)"/><g class="al-g" data-edge="a-mb"><rect class="alm" x="697.9" y="188" width="60.2" height="14" rx="2"/><text class="al" x="728" y="199" text-anchor="middle">metadatos</text></g><path id="a-yt" class="e dash" d="M686,492 H770" marker-end="url(#ah)"/><g class="al-g" data-edge="a-yt"><rect class="alm" x="700.7" y="484" width="54.6" height="14" rx="2"/><text class="al" x="728" y="495" text-anchor="middle">descarga</text></g><g class="n focal" data-id="browser" data-edges="a-ui,a-poll" tabindex="0" role="button" aria-label="Navegador"><rect x="48" y="160" width="282" height="84" rx="6"/><text class="nn" x="60" y="182">Navegador</text><text class="ns" x="60" y="200">SYNK//LAB · Web Audio</text><text class="ns" x="60" y="215">decks · EQ · FX · mezcla</text></g><g class="n focal" data-id="agent" data-edges="a-cmd,a-cli" tabindex="0" role="button" aria-label="Agente DJ"><rect x="48" y="275" width="282" height="64" rx="6"/><text class="nn" x="60" y="297">Agente DJ</text><text class="ns" x="60" y="315">dj_agent.py · decide cada mezcla</text></g><g class="n ext" data-id="cli" data-edges="a-cli" tabindex="0" role="button" aria-label="CLI de IA"><rect x="48" y="460" width="282" height="64" rx="6"/><text class="nn" x="60" y="482">CLI de IA</text><text class="ns" x="60" y="500">claude -p  ·  codex exec</text></g><g class="n" data-id="server" data-edges="a-ui,a-poll,a-cmd,a-dl,a-mb" tabindex="0" role="button" aria-label="Servidor FastAPI"><rect x="444" y="160" width="242" height="250" rx="6"/><text class="nn" x="456" y="182">Servidor FastAPI</text><text class="ns" x="456" y="200">server.py · :8000</text><text class="ns" x="456" y="215">sirve la app · MusicBrainz</text><line class="div" x1="444" y1="262" x2="686" y2="262"/><text class="ns" x="456" y="292">agent_bridge.py</text><text class="ns" x="456" y="307">cola de comandos</text><text class="ns" x="456" y="322">y buffer de eventos</text><line class="div" x1="444" y1="374" x2="686" y2="374"/><text class="ns" x="456" y="396">netguard.py · solo local</text></g><g class="n opt" data-id="dl" data-edges="a-dl,a-yt" tabindex="0" role="button" aria-label="Descargas"><rect x="444" y="460" width="242" height="64" rx="6"/><text class="nn" x="456" y="482">Descargas</text><text class="ns" x="456" y="500">yt-dlp + ffmpeg → Inbox</text></g><g class="n ext" data-id="mb" data-edges="a-mb" tabindex="0" role="button" aria-label="MusicBrainz"><rect x="770" y="168" width="206" height="56" rx="6"/><text class="nn" x="782" y="190">MusicBrainz</text><text class="ns" x="782" y="208">catálogo</text></g><g class="n ext" data-id="yt" data-edges="a-yt" tabindex="0" role="button" aria-label="YouTube · SoundCloud"><rect x="770" y="464" width="206" height="56" rx="6"/><text class="nn" x="782" y="486">YouTube · SoundCloud</text><text class="ns" x="782" y="504">enlaces</text></g></svg></div>
+    <div class="panel idle" id="panel-arch" aria-live="polite"><h3>Elige un bloque</h3><div class="where">haz clic o pasa el puntero</div><p>Al elegir un bloque se resaltan sus conexiones y se explica qué hace, qué archivo lo implementa y qué límites tiene.</p></div>
+  </section>
+
+  <section id="agente">
+    <div class="eyebrow">02 · Flujo del agente</div>
+    <h2>Cómo decide cada mezcla</h2>
+    <p class="intro">Poco antes de que termine un tema, el agente le pide a la IA un plan y lo envía al mixer. Avanza paso a paso o déjalo reproducirse.</p>
+    <div class="fig" id="fig-seq"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 660" width="1000" height="660" role="img" aria-labelledby="sqt sqd" font-family="system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif"><title id="sqt">Flujo del agente DJ</title><desc id="sqd">Secuencia: el navegador avisa que un tema termina; el agente lee el estado, consulta a la IA, envía el plan de transición y el mixer la ejecuta.</desc><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1,1 L9,5 L1,9" fill="none" stroke="context-stroke" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></marker><style>
+.bg{fill:#080b0b}
+.zone{fill:rgba(237,241,233,.02);stroke:rgba(237,241,233,.11);stroke-width:.8}
+.zl{font:500 8.5px ui-monospace,'SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;letter-spacing:.14em;fill:#7f8b84}
+.n rect{fill:#0f1413;stroke:#3a4640;stroke-width:1}
+.n.focal rect{fill:rgba(202,255,26,.08);stroke:#caff1a;stroke-width:1.4}
+.n.ext rect,.n.opt rect{stroke-dasharray:4 3}
+.n{cursor:default}
+.div{stroke:rgba(237,241,233,.10);stroke-width:1}
+.nn{font:600 13px system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;fill:#edf1e9}
+.ns{font:400 10px ui-monospace,'SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;fill:#a3aea6}
+.e{fill:none;stroke:#7f8b84;stroke-width:1.2}
+.e.link{stroke:#8ab4e8}
+.e.dash{stroke-dasharray:4 3;stroke-width:1}
+.alm{fill:#080b0b}
+.al{font:400 9px ui-monospace,'SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;letter-spacing:.04em;fill:#a3aea6}
+.eb{font:500 8.5px ui-monospace,'SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;letter-spacing:.16em;fill:#7f8b84}
+.tit{font:400 22px Georgia,'Times New Roman',serif;fill:#edf1e9}
+.sub{font:400 11px ui-monospace,'SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;fill:#a3aea6}
+.note{font:italic 400 13px Georgia,'Times New Roman',serif;fill:#a3aea6}
+@media (prefers-reduced-motion:reduce){.tok{display:none}}
+.life{stroke:#3a4640;stroke-width:1;stroke-dasharray:3 4}
+.badge{fill:#080b0b;stroke:#caff1a;stroke-width:1.2}
+.bt{font:600 10px ui-monospace,'SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;fill:#caff1a}</style></defs><rect class="bg" width="1000" height="660"/><text class="eb" x="32" y="34">FLUJO DEL AGENTE</text><text class="tit" x="32" y="62">Cómo decide el agente cada mezcla</text><text class="sub" x="32" y="82">Siete mensajes entre la pestaña, el servidor, el agente y la IA.</text><line class="life" x1="130" y1="148" x2="130" y2="640"/><line class="life" x1="370" y1="148" x2="370" y2="640"/><line class="life" x1="630" y1="148" x2="630" y2="640"/><line class="life" x1="880" y1="148" x2="880" y2="640"/><g class="n focal" data-id="s-nav"><rect x="45" y="100" width="170" height="48" rx="6"/><text class="nn" x="57" y="122">Navegador</text><text class="ns" x="57" y="138">mixer</text></g><g class="n " data-id="s-srv"><rect x="285" y="100" width="170" height="48" rx="6"/><text class="nn" x="297" y="122">Servidor</text><text class="ns" x="297" y="138">puente /api/agent</text></g><g class="n focal" data-id="s-agt"><rect x="545" y="100" width="170" height="48" rx="6"/><text class="nn" x="557" y="122">Agente DJ</text><text class="ns" x="557" y="138">dj_agent.py</text></g><g class="n ext" data-id="s-ia"><rect x="795" y="100" width="170" height="48" rx="6"/><text class="nn" x="807" y="122">IA</text><text class="ns" x="807" y="138">claude · codex</text></g><g class="msg" data-step="1"><path class="e link" d="M134,196 H366" marker-end="url(#ah)"/><rect class="alm" x="172.5" y="176" width="155.1" height="14" rx="2"/><text class="al" x="250.0" y="187" text-anchor="middle">POST /event · track_ending</text><circle class="stepdot" cx="134" cy="196" r="0"/></g><g class="msg" data-step="2"><path class="e link dash" d="M374,252 H626" marker-end="url(#ah)"/><rect class="alm" x="428.0" y="232" width="143.9" height="14" rx="2"/><text class="al" x="500.0" y="243" text-anchor="middle">long-poll → track_ending</text><circle class="stepdot" cx="374" cy="252" r="0"/></g><g class="msg" data-step="3"><path class="e link" d="M626,312 H134" marker-end="url(#ah)"/><rect class="alm" x="419.7" y="292" width="160.7" height="14" rx="2"/><text class="al" x="500" y="303" text-anchor="middle">command: state  (vía /poll)</text><circle class="stepdot" cx="134" cy="312" r="0"/></g><g class="msg" data-step="3"><path class="e link dash" d="M134,340 H626" marker-end="url(#ah)"/><rect class="alm" x="439.2" y="320" width="121.6" height="14" rx="2"/><text class="al" x="500" y="331" text-anchor="middle">estado: decks · cola</text><circle class="stepdot" cx="134" cy="340" r="0"/></g><g class="msg" data-step="4"><path class="e " d="M634,410 H876" marker-end="url(#ah)"/><rect class="alm" x="666.3" y="390" width="177.4" height="14" rx="2"/><text class="al" x="755.0" y="401" text-anchor="middle">prompt: BPM · tonalidad · bajo</text><circle class="stepdot" cx="634" cy="410" r="0"/></g><g class="msg" data-step="5"><path class="e dash" d="M876,462 H634" marker-end="url(#ah)"/><rect class="alm" x="669.1" y="442" width="171.8" height="14" rx="2"/><text class="al" x="755.0" y="453" text-anchor="middle">JSON: fade · eq · fx · filtro</text><circle class="stepdot" cx="634" cy="462" r="0"/></g><g class="msg" data-step="6"><path class="e link" d="M626,530 H134" marker-end="url(#ah)"/><rect class="alm" x="428.0" y="510" width="143.9" height="14" rx="2"/><text class="al" x="500" y="521" text-anchor="middle">plan_transition(from_id)</text><circle class="stepdot" cx="134" cy="530" r="0"/></g><g class="msg" data-step="7"><path class="e link" d="M134,590 H366" marker-end="url(#ah)"/><rect class="alm" x="161.3" y="570" width="177.4" height="14" rx="2"/><text class="al" x="250.0" y="581" text-anchor="middle">POST /event · transition_start</text><circle class="stepdot" cx="134" cy="590" r="0"/></g><g class="msg" data-step="1"><circle cx="104" cy="196" r="9" class="badge"/><text class="bt" x="104" y="199.5" text-anchor="middle">1</text></g><g class="msg" data-step="2"><circle cx="344" cy="252" r="9" class="badge"/><text class="bt" x="344" y="255.5" text-anchor="middle">2</text></g><g class="msg" data-step="3"><circle cx="656" cy="312" r="9" class="badge"/><text class="bt" x="656" y="315.5" text-anchor="middle">3</text></g><g class="msg" data-step="4"><circle cx="604" cy="410" r="9" class="badge"/><text class="bt" x="604" y="413.5" text-anchor="middle">4</text></g><g class="msg" data-step="5"><circle cx="906" cy="462" r="9" class="badge"/><text class="bt" x="906" y="465.5" text-anchor="middle">5</text></g><g class="msg" data-step="6"><circle cx="656" cy="530" r="9" class="badge"/><text class="bt" x="656" y="533.5" text-anchor="middle">6</text></g><g class="msg" data-step="7"><circle cx="104" cy="590" r="9" class="badge"/><text class="bt" x="104" y="593.5" text-anchor="middle">7</text></g></svg></div>
+    <div class="controls" role="group" aria-label="Controles de la secuencia">
+      <button class="btn primary" id="sq-play" type="button">▶ Reproducir</button>
+      <button class="btn" id="sq-prev" type="button">← Anterior</button>
+      <button class="btn" id="sq-next" type="button">Siguiente →</button>
+      <button class="btn" id="sq-reset" type="button">Ver completo</button>
+      <span class="hint" id="sq-count">completo · 7 pasos</span>
+    </div>
+    <div class="step-cap" id="sq-cap" aria-live="polite"><b>PASO 1–7</b>Todos los mensajes están visibles. Usa los botones para recorrerlos de a uno.</div>
+  </section>
+
+  <section id="mezcla">
+    <div class="eyebrow">03 · Mezcla por frases</div>
+    <h2>Entrar sin intro, salir donde cae la energía</h2>
+    <p class="intro">Cada barra es una frase de 16 beats. El tema que entra salta su intro y arranca en una frase con bajo y nivel parecido; el que sale se funde cuando su energía cae. Mueve el deslizador para ver el cruce.</p>
+    <div class="fig" id="fig-mix"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520" width="1000" height="520" role="img" aria-labelledby="mxt mxd" font-family="system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif"><title id="mxt">Mezcla por frases</title><desc id="mxd">El tema entrante salta su intro y entra en una frase con bajo y energía similar; el saliente se funde cuando su energía cae; ambos se encuentran en el tempo promedio.</desc><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1,1 L9,5 L1,9" fill="none" stroke="context-stroke" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></marker><style>
+.bg{fill:#080b0b}
+.zone{fill:rgba(237,241,233,.02);stroke:rgba(237,241,233,.11);stroke-width:.8}
+.zl{font:500 8.5px ui-monospace,'SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;letter-spacing:.14em;fill:#7f8b84}
+.n rect{fill:#0f1413;stroke:#3a4640;stroke-width:1}
+.n.focal rect{fill:rgba(202,255,26,.08);stroke:#caff1a;stroke-width:1.4}
+.n.ext rect,.n.opt rect{stroke-dasharray:4 3}
+.n{cursor:default}
+.div{stroke:rgba(237,241,233,.10);stroke-width:1}
+.nn{font:600 13px system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;fill:#edf1e9}
+.ns{font:400 10px ui-monospace,'SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;fill:#a3aea6}
+.e{fill:none;stroke:#7f8b84;stroke-width:1.2}
+.e.link{stroke:#8ab4e8}
+.e.dash{stroke-dasharray:4 3;stroke-width:1}
+.alm{fill:#080b0b}
+.al{font:400 9px ui-monospace,'SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;letter-spacing:.04em;fill:#a3aea6}
+.eb{font:500 8.5px ui-monospace,'SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;letter-spacing:.16em;fill:#7f8b84}
+.tit{font:400 22px Georgia,'Times New Roman',serif;fill:#edf1e9}
+.sub{font:400 11px ui-monospace,'SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;fill:#a3aea6}
+.note{font:italic 400 13px Georgia,'Times New Roman',serif;fill:#a3aea6}
+@media (prefers-reduced-motion:reduce){.tok{display:none}}
+.axis{stroke:#3a4640;stroke-width:1}
+.bA{fill:#a3aea6;opacity:.85} .bB{fill:#7f8b84;opacity:.9}
+.win{fill:rgba(202,255,26,.07);stroke:#caff1a;stroke-width:1;stroke-dasharray:4 3}
+.skip{fill:#080b0b;opacity:.62}
+.playhead{stroke:#caff1a;stroke-width:1.6}
+.ann{fill:#caff1a}
+.panel{fill:#0f1413;stroke:#3a4640;stroke-width:1}
+.cA{fill:none;stroke:#a3aea6;stroke-width:1.8} .cB{fill:none;stroke:#caff1a;stroke-width:1.8}
+.cAt{fill:#a3aea6} .cBt{fill:#caff1a}</style></defs><rect class="bg" width="1000" height="520"/><text class="eb" x="32" y="34">ENERGÍA POR FRASE</text><text class="tit" x="32" y="62">Mezcla por frases</text><text class="sub" x="32" y="82">Se ve la energía de cada frase de 16 beats (energía real medida en dos temas de prueba).</text><g id="mx-lanes"><text class="eb" x="60" y="130">DECK A · TEMA SALIENTE · 128 BPM</text><text class="eb" x="60" y="250">DECK B · TEMA ENTRANTE · 129.8 BPM</text><line class="axis" x1="60" y1="196" x2="940" y2="196"/><line class="axis" x1="60" y1="316" x2="940" y2="316"/><g id="mx-A"><rect class="bA" data-i="0" x="60.0" y="156.6" width="25.0" height="39.4" rx="1.5"/><rect class="bA" data-i="1" x="87.0" y="151.5" width="25.0" height="44.5" rx="1.5"/><rect class="bA" data-i="2" x="114.0" y="151.5" width="25.0" height="44.5" rx="1.5"/><rect class="bA" data-i="3" x="141.0" y="160.0" width="25.0" height="36.0" rx="1.5"/><rect class="bA" data-i="4" x="168.0" y="153.8" width="25.0" height="42.2" rx="1.5"/><rect class="bA" data-i="5" x="195.0" y="151.5" width="25.0" height="44.5" rx="1.5"/><rect class="bA" data-i="6" x="222.0" y="151.8" width="25.0" height="44.2" rx="1.5"/><rect class="bA" data-i="7" x="249.0" y="152.5" width="25.0" height="43.5" rx="1.5"/><rect class="bA" data-i="8" x="276.0" y="152.1" width="25.0" height="43.9" rx="1.5"/><rect class="bA" data-i="9" x="303.0" y="151.1" width="25.0" height="44.9" rx="1.5"/><rect class="bA" data-i="10" x="330.0" y="152.1" width="25.0" height="43.9" rx="1.5"/><rect class="bA" data-i="11" x="357.0" y="150.8" width="25.0" height="45.2" rx="1.5"/><rect class="bA" data-i="12" x="384.0" y="150.8" width="25.0" height="45.2" rx="1.5"/><rect class="bA" data-i="13" x="411.0" y="149.4" width="25.0" height="46.6" rx="1.5"/><rect class="bA" data-i="14" x="438.0" y="149.4" width="25.0" height="46.6" rx="1.5"/><rect class="bA" data-i="15" x="465.0" y="149.4" width="25.0" height="46.6" rx="1.5"/><rect class="bA" data-i="16" x="492.0" y="156.2" width="25.0" height="39.8" rx="1.5"/><rect class="bA" data-i="17" x="519.0" y="171.2" width="25.0" height="24.8" rx="1.5"/><rect class="bA" data-i="18" x="546.0" y="176.3" width="25.0" height="19.7" rx="1.5"/><rect class="bA" data-i="19" x="573.0" y="184.8" width="25.0" height="11.2" rx="1.5"/><rect class="bA" data-i="20" x="600.0" y="162.7" width="25.0" height="33.3" rx="1.5"/><rect class="bA" data-i="21" x="627.0" y="151.5" width="25.0" height="44.5" rx="1.5"/><rect class="bA" data-i="22" x="654.0" y="151.8" width="25.0" height="44.2" rx="1.5"/><rect class="bA" data-i="23" x="681.0" y="151.5" width="25.0" height="44.5" rx="1.5"/><rect class="bA" data-i="24" x="708.0" y="151.5" width="25.0" height="44.5" rx="1.5"/><rect class="bA" data-i="25" x="735.0" y="151.1" width="25.0" height="44.9" rx="1.5"/><rect class="bA" data-i="26" x="762.0" y="151.8" width="25.0" height="44.2" rx="1.5"/><rect class="bA" data-i="27" x="789.0" y="150.4" width="25.0" height="45.6" rx="1.5"/><rect class="bA" data-i="28" x="816.0" y="150.8" width="25.0" height="45.2" rx="1.5"/><rect class="bA" data-i="29" x="843.0" y="155.2" width="25.0" height="40.8" rx="1.5"/><rect class="bA" data-i="30" x="870.0" y="157.9" width="25.0" height="38.1" rx="1.5"/></g><clipPath id="mxclip"><rect x="40" y="246" width="900" height="90"/></clipPath><g clip-path="url(#mxclip)"><g id="mx-B" transform="translate(321.5,0)"><rect class="bB" data-i="0" x="60.0" y="289.5" width="24.6" height="26.5" rx="1.5"/><rect class="bB" data-i="1" x="86.6" y="287.8" width="24.6" height="28.2" rx="1.5"/><rect class="bB" data-i="2" x="113.2" y="261.9" width="24.6" height="54.1" rx="1.5"/><rect class="bB" data-i="3" x="139.8" y="261.9" width="24.6" height="54.1" rx="1.5"/><rect class="bB" data-i="4" x="166.3" y="262.3" width="24.6" height="53.7" rx="1.5"/><rect class="bB" data-i="5" x="192.9" y="265.7" width="24.6" height="50.3" rx="1.5"/><rect class="bB" data-i="6" x="219.5" y="262.6" width="24.6" height="53.4" rx="1.5"/><rect class="bB" data-i="7" x="246.1" y="262.6" width="24.6" height="53.4" rx="1.5"/><rect class="bB" data-i="8" x="272.7" y="262.6" width="24.6" height="53.4" rx="1.5"/><rect class="bB" data-i="9" x="299.3" y="263.3" width="24.6" height="52.7" rx="1.5"/><rect class="bB" data-i="10" x="325.9" y="282.3" width="24.6" height="33.7" rx="1.5"/><rect class="bB" data-i="11" x="352.4" y="287.8" width="24.6" height="28.2" rx="1.5"/><rect class="bB" data-i="12" x="379.0" y="263.3" width="24.6" height="52.7" rx="1.5"/><rect class="bB" data-i="13" x="405.6" y="263.0" width="24.6" height="53.0" rx="1.5"/><rect class="bB" data-i="14" x="432.2" y="263.6" width="24.6" height="52.4" rx="1.5"/><rect class="bB" data-i="15" x="458.8" y="282.0" width="24.6" height="34.0" rx="1.5"/><rect class="bB" data-i="16" x="485.4" y="263.0" width="24.6" height="53.0" rx="1.5"/><rect class="bB" data-i="17" x="512.0" y="263.6" width="24.6" height="52.4" rx="1.5"/><rect class="bB" data-i="18" x="538.5" y="263.0" width="24.6" height="53.0" rx="1.5"/><rect class="bB" data-i="19" x="565.1" y="273.2" width="24.6" height="42.8" rx="1.5"/><rect class="bB" data-i="20" x="591.7" y="263.3" width="24.6" height="52.7" rx="1.5"/><rect class="bB" data-i="21" x="618.3" y="263.6" width="24.6" height="52.4" rx="1.5"/><rect class="bB" data-i="22" x="644.9" y="263.6" width="24.6" height="52.4" rx="1.5"/><rect class="bB" data-i="23" x="671.5" y="264.3" width="24.6" height="51.7" rx="1.5"/><rect class="bB" data-i="24" x="698.1" y="304.4" width="24.6" height="11.6" rx="1.5"/><rect class="bB" data-i="25" x="724.6" y="310.9" width="24.6" height="5.1" rx="1.5"/><rect class="bB" data-i="26" x="751.2" y="311.0" width="24.6" height="5.0" rx="1.5"/><rect class="bB" data-i="27" x="777.8" y="302.4" width="24.6" height="13.6" rx="1.5"/><rect class="bB" data-i="28" x="804.4" y="299.3" width="24.6" height="16.7" rx="1.5"/><rect class="bB" data-i="29" x="831.0" y="293.6" width="24.6" height="22.4" rx="1.5"/><rect class="bB" data-i="30" x="857.6" y="286.1" width="24.6" height="29.9" rx="1.5"/><rect class="bB" data-i="31" x="884.2" y="285.4" width="24.6" height="30.6" rx="1.5"/><rect class="bB" data-i="32" x="910.8" y="263.0" width="24.6" height="53.0" rx="1.5"/><rect class="bB" data-i="33" x="937.3" y="263.3" width="24.6" height="52.7" rx="1.5"/><rect class="bB" data-i="34" x="963.9" y="263.6" width="24.6" height="52.4" rx="1.5"/><rect class="bB" data-i="35" x="990.5" y="279.6" width="24.6" height="36.4" rx="1.5"/></g></g></g><rect id="mx-skip" class="skip" x="381.5" y="256" width="54.0" height="64"/><rect id="mx-win" class="win" x="435.5" y="122" width="57.6" height="202" rx="4"/><line id="mx-ph" class="playhead" x1="435.5" y1="116" x2="435.5" y2="326"/><g id="mx-ann-phrase"><text class="eb ann" x="501.1" y="136">SALIDA · LA ENERGÍA CAE</text><text class="eb ann" x="385.5" y="338">INTRO SALTEADO · 15 s</text></g><text class="eb" x="60" y="360">CROSSFADE · POTENCIA CONSTANTE (COS / SEN)</text><rect class="panel" x="60" y="372" width="380" height="96" rx="4"/><polyline class="cA" points="60.0,372.0 69.5,372.1 79.0,372.3 88.5,372.7 98.0,373.2 107.5,373.8 117.0,374.7 126.5,375.6 136.0,376.7 145.5,377.9 155.0,379.3 164.5,380.8 174.0,382.5 183.5,384.2 193.0,386.1 202.5,388.2 212.0,390.3 221.5,392.6 231.0,395.0 240.5,397.5 250.0,400.1 259.5,402.8 269.0,405.7 278.5,408.6 288.0,411.6 297.5,414.7 307.0,417.8 316.5,421.1 326.0,424.4 335.5,427.8 345.0,431.3 354.5,434.8 364.0,438.3 373.5,441.9 383.0,445.6 392.5,449.3 402.0,453.0 411.5,456.7 421.0,460.5 430.5,464.2 440.0,468.0"/><polyline class="cB" points="60.0,468.0 69.5,464.2 79.0,460.5 88.5,456.7 98.0,453.0 107.5,449.3 117.0,445.6 126.5,441.9 136.0,438.3 145.5,434.8 155.0,431.3 164.5,427.8 174.0,424.4 183.5,421.1 193.0,417.8 202.5,414.7 212.0,411.6 221.5,408.6 231.0,405.7 240.5,402.8 250.0,400.1 259.5,397.5 269.0,395.0 278.5,392.6 288.0,390.3 297.5,388.2 307.0,386.1 316.5,384.2 326.0,382.5 335.5,380.8 345.0,379.3 354.5,377.9 364.0,376.7 373.5,375.6 383.0,374.7 392.5,373.8 402.0,373.2 411.5,372.7 421.0,372.3 430.5,372.1 440.0,372.0"/><line id="mx-cph" class="playhead" x1="60" y1="372" x2="60" y2="468"/><text class="al cAt" x="68" y="386">A</text><text class="al cBt" x="426" y="386">B</text><text class="al" x="60" y="484">0 %</text><text class="al" x="440" y="484" text-anchor="end">100 %</text><text class="eb" x="500" y="360">TEMPO · SE ENCUENTRAN EN EL PROMEDIO</text><g class="n " data-id="m-tA" data-edges="" tabindex="0" role="button" aria-label="128.0"><rect x="500" y="372" width="130" height="56" rx="6"/><text class="nn" x="512" y="394">128.0</text><text class="ns" x="512" y="412">deck A</text></g><g class="n " data-id="m-tB" data-edges="" tabindex="0" role="button" aria-label="129.8"><rect x="810" y="372" width="130" height="56" rx="6"/><text class="nn" x="822" y="394">129.8</text><text class="ns" x="822" y="412">deck B</text></g><g class="n focal" data-id="m-tM" data-edges="" tabindex="0" role="button" aria-label="128.9"><rect x="655" y="380" width="130" height="48" rx="6"/><text class="nn" x="667" y="402">128.9</text><text class="ns" x="667" y="420">ambos al promedio</text></g><path class="e" d="M630,400 H655" marker-end="url(#ah)"/><path class="e" d="M810,400 H785" marker-end="url(#ah)"/><text class="note" x="500" y="464">Entra en su primera frase con bajo y nivel parecido,</text><text class="note" x="500" y="484">y el que sale se funde donde la energía cae.</text></svg></div>
+    <div class="controls" role="group" aria-label="Controles de la mezcla">
+      <label class="sw"><input type="checkbox" id="mx-phrase" checked> Mezclar por frases</label>
+      <input type="range" id="mx-t" min="0" max="100" value="0" aria-label="Progreso de la mezcla">
+      <button class="btn" id="mx-play" type="button">▶ Animar</button>
+    </div>
+    <div class="readout" aria-live="polite">
+      <div class="ro"><b id="ro-a">100%</b><small>Volumen deck A</small></div>
+      <div class="ro lime"><b id="ro-b">0%</b><small>Volumen deck B</small></div>
+      <div class="ro"><b id="ro-bpm">128.9</b><small>BPM de ambos</small></div>
+      <div class="ro"><b id="ro-ph" style="font-size:20px;line-height:1.15">Entra B</b><small>Qué pasa ahora</small></div>
+    </div>
+  </section>
+
+  <section id="audio">
+    <div class="eyebrow">04 · Cadena de audio</div>
+    <h2>De archivo a altavoces</h2>
+    <p class="intro">Cada deck tiene su propia copia de la cadena. Los efectos se envían después del fader, así sus colas sobreviven al cruce. Toca un bloque para ver los valores reales.</p>
+    <div class="fig" id="fig-audio"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 530" width="1000" height="530" role="img" aria-labelledby="aut aud" font-family="system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif"><title id="aut">Cadena de audio</title><desc id="aud">Archivo, filtros y EQ, fader, efectos post-fader, trim, master, compresor y salida a altavoces y grabación.</desc><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1,1 L9,5 L1,9" fill="none" stroke="context-stroke" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></marker><style>
+.bg{fill:#080b0b}
+.zone{fill:rgba(237,241,233,.02);stroke:rgba(237,241,233,.11);stroke-width:.8}
+.zl{font:500 8.5px ui-monospace,'SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;letter-spacing:.14em;fill:#7f8b84}
+.n rect{fill:#0f1413;stroke:#3a4640;stroke-width:1}
+.n.focal rect{fill:rgba(202,255,26,.08);stroke:#caff1a;stroke-width:1.4}
+.n.ext rect,.n.opt rect{stroke-dasharray:4 3}
+.n{cursor:default}
+.div{stroke:rgba(237,241,233,.10);stroke-width:1}
+.nn{font:600 13px system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;fill:#edf1e9}
+.ns{font:400 10px ui-monospace,'SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;fill:#a3aea6}
+.e{fill:none;stroke:#7f8b84;stroke-width:1.2}
+.e.link{stroke:#8ab4e8}
+.e.dash{stroke-dasharray:4 3;stroke-width:1}
+.alm{fill:#080b0b}
+.al{font:400 9px ui-monospace,'SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;letter-spacing:.04em;fill:#a3aea6}
+.eb{font:500 8.5px ui-monospace,'SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;letter-spacing:.16em;fill:#7f8b84}
+.tit{font:400 22px Georgia,'Times New Roman',serif;fill:#edf1e9}
+.sub{font:400 11px ui-monospace,'SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;fill:#a3aea6}
+.note{font:italic 400 13px Georgia,'Times New Roman',serif;fill:#a3aea6}
+@media (prefers-reduced-motion:reduce){.tok{display:none}}
+</style></defs><rect class="bg" width="1000" height="530"/><text class="eb" x="32" y="34">CADENA DE AUDIO</text><text class="tit" x="32" y="62">De archivo a altavoces</text><text class="sub" x="32" y="82">La cadena de audio de cada deck y la salida común.</text><rect class="zone" x="16" y="124" width="968" height="150" rx="8"/><rect class="alm" x="28" y="117" width="223" height="14" rx="2"/><text class="zl" x="34" y="127">CADA DECK · A Y B TIENEN SU PROPIA COPIA</text><rect class="zone" x="16" y="338" width="968" height="160" rx="8"/><rect class="alm" x="28" y="331" width="75" height="14" rx="2"/><text class="zl" x="34" y="341">SALIDA COMÚN</text><path id="c1" class="e " d="M254,200 H294" marker-end="url(#ah)"/><path id="c2" class="e " d="M526,200 H566" marker-end="url(#ah)"/><path id="c3" class="e " d="M726,200 H766" marker-end="url(#ah)"/><path id="c4" class="e dash" d="M889,244 V298 Q889,306 881,306 H135 Q127,306 127,314 V392" marker-end="url(#ah)"/><g class="al-g" data-edge="c4"><rect class="alm" x="397.0" y="298" width="222.0" height="14" rx="2"/><text class="al" x="508" y="309" text-anchor="middle">los efectos se suman después del fader</text></g><path id="c5" class="e " d="M254,423 H294" marker-end="url(#ah)"/><path id="c6" class="e " d="M466,423 H506" marker-end="url(#ah)"/><path id="c7" class="e " d="M736,413 H748 Q756,413 756,405 V406 Q756,398 764,398 H776" marker-end="url(#ah)"/><path id="c8" class="e " d="M736,433 H748 Q756,433 756,441 V460 Q756,468 764,468 H776" marker-end="url(#ah)"/><g class="n focal" data-id="file" data-edges="c1" tabindex="0" role="button" aria-label="Archivo local"><rect x="32" y="160" width="222" height="84" rx="6"/><text class="nn" x="44" y="182">Archivo local</text><text class="ns" x="44" y="200">MP3 · WAV · FLAC</text><text class="ns" x="44" y="215">&lt;audio&gt; del navegador</text></g><g class="n " data-id="eq" data-edges="c1,c2" tabindex="0" role="button" aria-label="Filtros y EQ"><rect x="294" y="160" width="232" height="84" rx="6"/><text class="nn" x="306" y="182">Filtros y EQ</text><text class="ns" x="306" y="200">HP 20 Hz · LP 19 kHz</text><text class="ns" x="306" y="215">Low 180 · Mid 1.1k · High 5.5k</text></g><g class="n " data-id="fader" data-edges="c2,c3" tabindex="0" role="button" aria-label="Fader del deck"><rect x="566" y="160" width="160" height="84" rx="6"/><text class="nn" x="578" y="182">Fader del deck</text><text class="ns" x="578" y="200">gain por deck</text><text class="ns" x="578" y="215">crossfader A ↔ B</text></g><g class="n opt" data-id="fx" data-edges="c3,c4" tabindex="0" role="button" aria-label="Efectos"><rect x="766" y="160" width="202" height="84" rx="6"/><text class="nn" x="778" y="182">Efectos</text><text class="ns" x="778" y="200">eco · reverb · flanger</text><text class="ns" x="778" y="215">post-fader</text></g><g class="n " data-id="trim" data-edges="c4,c5" tabindex="0" role="button" aria-label="Trim · auto-gain"><rect x="32" y="392" width="222" height="62" rx="6"/><text class="nn" x="44" y="414">Trim · auto-gain</text><text class="ns" x="44" y="432">iguala los volúmenes</text></g><g class="n " data-id="master" data-edges="c5,c6" tabindex="0" role="button" aria-label="Master"><rect x="294" y="392" width="172" height="62" rx="6"/><text class="nn" x="306" y="414">Master</text><text class="ns" x="306" y="432">ganancia 0.82</text></g><g class="n focal" data-id="comp" data-edges="c6,c7,c8" tabindex="0" role="button" aria-label="Compresor"><rect x="506" y="392" width="230" height="62" rx="6"/><text class="nn" x="518" y="414">Compresor</text><text class="ns" x="518" y="432">umbral −4 dB · 16:1</text></g><g class="n " data-id="spk" data-edges="c7" tabindex="0" role="button" aria-label="Altavoces"><rect x="776" y="378" width="192" height="40" rx="6"/><text class="nn" x="788" y="400">Altavoces</text></g><g class="n opt" data-id="rec" data-edges="c8" tabindex="0" role="button" aria-label="Grabación del set"><rect x="776" y="448" width="192" height="40" rx="6"/><text class="nn" x="788" y="470">Grabación del set</text></g></svg></div>
+    <div class="panel idle" id="panel-audio" aria-live="polite"><h3>Elige un bloque</h3><div class="where">haz clic o pasa el puntero</div><p>Los valores salen directamente del código de <code>static/mixer.js</code>.</p></div>
+  </section>
+</main>
+<footer>SYNK//LAB · documentación generada desde el código · los diagramas siguen el estilo de <a href="https://github.com/cathrynlavery/diagram-design">diagram-design</a> (MIT)</footer>
+
+<script>
+(function(){
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const INFO={"arch": {"browser": ["Navegador · la app SYNK//LAB", "static/index.html · static/mixer.js", "Aquí vive todo el audio: dos decks de Web Audio, EQ, filtros, efectos, crossfader, beatgrid y las transiciones automáticas. Tus archivos se procesan en el navegador y no se suben a ningún lado. Es la única pieza que suena."], "agent": ["Agente DJ (opcional)", "dj_agent.py", "Escucha los eventos del mixer y, poco antes de que termine un tema, decide cómo mezclar el siguiente: duración del fade, EQ, efecto y filtro. Corre en tu máquina y no necesita claves de API."], "cli": ["CLI de IA", "claude -p  ·  codex exec", "El agente le pregunta a la CLI donde ya iniciaste sesión (suscripción de Claude o de ChatGPT) y recibe un JSON corto. Si la IA tarda demasiado, el agente usa reglas aleatorias como respaldo."], "server": ["Servidor FastAPI", "server.py · agent_bridge.py · netguard.py", "Sirve la app, consulta MusicBrainz (máx. 1 consulta/s, caché de 6 h) y hace de puente entre el agente y la pestaña: guarda una cola de comandos y un buffer de eventos. Los endpoints del agente y de descarga solo aceptan clientes locales."], "dl": ["Descargas (opcional)", "downloader.py · yt-dlp + ffmpeg", "Solo si lo pides por enlace (YouTube o SoundCloud, únicamente HTTPS): baja el audio como MP3 320k a tu carpeta Inbox y lo importa al mixer. Sin tu orden no descarga nada. Úsalo solo con contenido que tengas derecho a usar."], "mb": ["MusicBrainz", "catálogo de metadatos", "Búsqueda por texto de temas, sellos y lanzamientos. Son metadatos: no hay búsqueda por similitud de sonido."], "yt": ["YouTube · SoundCloud", "enlaces de referencia", "Fuente de enlaces para previsualizar y, si quieres, descargar. El audio embebido solo se mezcla por volumen: no se puede enrutar a Web Audio."]}, "audio": {"file": ["Archivo local", "<audio> → MediaElementSource", "El archivo se reproduce con un elemento de audio del navegador y entra al grafo de Web Audio. Nada sale de tu equipo."], "eq": ["Filtros y EQ", "HP · LP · Low · Mid · High", "Pasa-altos (20 Hz) y pasa-bajos (19 kHz) para los barridos, y un EQ de 3 bandas: graves 180 Hz, medios 1.1 kHz, agudos 5.5 kHz. El Auto DJ los mueve solo durante la mezcla."], "fader": ["Fader del deck", "gain · crossfader", "El crossfader es de potencia constante: el deck A recibe cos θ y el B sen θ, así la suma se mantiene pareja durante el cruce."], "fx": ["Efectos post-fader", "eco · reverb · flanger", "Se envían después del fader, así sus colas sobreviven al crossfade. Eco: retardo de 320 ms con realimentación. Reverb: convolución. Flanger: retardo corto modulado por un LFO de 0.22 Hz."], "trim": ["Trim · auto-gain", "iguala volúmenes", "Compensa la diferencia de volumen entre temas usando el nivel RMS medido al analizar cada archivo."], "master": ["Master", "ganancia 0.82", "Suma ambos decks. Un analizador mide el nivel que ves en el medidor principal."], "comp": ["Compresor", "umbral −4 dB · ratio 16:1", "Limita los picos para proteger la salida cuando se suman dos temas fuertes."], "spk": ["Altavoces", "salida del navegador", "La mezcla que escuchas."], "rec": ["Grabación del set", "MediaStream", "Una copia de la salida final para grabar la sesión completa desde el navegador."]}}, STEPS=[[1, "Falta poco: la pestaña avisa <code>track_ending</code> unos 70 s antes del punto de salida."], [2, "El agente espera en <em>long-poll</em> y recibe el evento."], [3, "El agente pide el estado: decks, cola y datos del tema siguiente. El servidor retransmite el comando y la pestaña responde."], [4, "Arma un prompt con la pareja de temas: diferencia de BPM, compatibilidad de tonalidad (Camelot), peso del bajo y si los golpes se pueden alinear."], [5, "La IA contesta solo un JSON: <code>fade</code>, <code>eq</code>, <code>fx</code>, <code>fx_amount</code>, <code>filter</code> y, si quiere, <code>next_id</code>."], [6, "El agente envía <code>plan_transition</code> con <code>from_id</code>. Si la mezcla ya empezó, el mixer rechaza el plan por tardío."], [7, "El mixer ejecuta la mezcla alineada por beatgrid y avisa <code>transition_start</code>."]], G={"px": 3.6, "x0": 60, "fade": 16, "exitPhrase": 120.3, "exitEnd": 236.0, "entryB": 15.0, "laneA": 196, "laneB": 316, "bpmA": 128.0, "bpmB": 129.8};
+
+/* ---- clickable nodes: highlight connections + explain ---- */
+function bindNodes(figId,panelId,info){
+  const svg=$('#'+figId+' svg'),panel=$('#'+panelId);if(!svg||!panel)return;
+  const idle=panel.innerHTML;let pinned=null;
+  function paint(id){
+    $$('.n',svg).forEach(n=>n.classList.toggle('is-active',n.dataset.id===id));
+    const node=id&&$('.n[data-id="'+id+'"]',svg);
+    const rel=node?(node.dataset.edges||'').split(',').filter(Boolean):[];
+    $$('.e',svg).forEach(e=>e.classList.toggle('rel',rel.includes(e.id)));
+    $$('.al-g',svg).forEach(g=>g.classList.toggle('rel',rel.includes(g.dataset.edge)));
+    svg.classList.toggle('has-active',!!id);
+    if(id&&info[id]){const [t,w,p]=info[id];panel.classList.remove('idle');panel.innerHTML='<h3></h3><div class="where"></div><p></p>';
+      $('h3',panel).textContent=t;$('.where',panel).textContent=w;$('p',panel).textContent=p}
+    else{panel.classList.add('idle');panel.innerHTML=idle}
+  }
+  $$('.n[data-id]',svg).forEach(n=>{
+    const id=n.dataset.id;if(!info[id])return;n.classList.add('is-pick');
+    n.addEventListener('mouseenter',()=>paint(id));
+    n.addEventListener('mouseleave',()=>paint(pinned));
+    n.addEventListener('focus',()=>paint(id));
+    n.addEventListener('blur',()=>paint(pinned));
+    n.addEventListener('click',()=>{pinned=pinned===id?null:id;paint(pinned)});
+    n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pinned=pinned===id?null:id;paint(pinned)}});
+  });
+}
+bindNodes('fig-arch','panel-arch',INFO.arch);
+bindNodes('fig-audio','panel-audio',INFO.audio);
+
+/* ---- sequence: static-first, steps are an enhancement ---- */
+(function(){
+  const svg=$('#fig-seq svg');if(!svg)return;
+  const play=$('#sq-play'),prev=$('#sq-prev'),next=$('#sq-next'),reset=$('#sq-reset'),count=$('#sq-count'),cap=$('#sq-cap');
+  const N=STEPS.length;let cur=N,timer=null;
+  function render(){
+    svg.classList.add('motion-ready');
+    $$('.msg',svg).forEach(m=>{const s=+m.dataset.step;m.classList.toggle('off',s>cur);m.classList.toggle('now',cur<N&&s===cur)});
+    if(cur>=1&&cur<=N&&cur<N+1){}
+    if(cur===N&&!timer&&!svg.dataset.touched){cap.innerHTML='<b>PASO 1–7</b>Todos los mensajes están visibles. Usa los botones para recorrerlos de a uno.';count.textContent='completo · '+N+' pasos'}
+    else if(cur===0){cap.innerHTML='<b>INICIO</b>El mixer está reproduciendo un tema. Todavía no pasó nada.';count.textContent='paso 0 de '+N}
+    else{cap.innerHTML='<b>PASO '+cur+'</b>'+STEPS[cur-1][1];count.textContent='paso '+cur+' de '+N}
+    prev.disabled=cur<=0;next.disabled=cur>=N;
+    play.textContent=timer?'❚❚ Pausar':(cur>=N?'↻ Reproducir':'▶ Continuar');
+  }
+  function stop(){if(timer){clearInterval(timer);timer=null}}
+  function go(n){svg.dataset.touched='1';cur=Math.max(0,Math.min(N,n));render()}
+  play.addEventListener('click',()=>{
+    if(timer){stop();render();return}
+    if(cur>=N)go(0);
+    timer=setInterval(()=>{if(cur>=N){stop();render();return}go(cur+1);if(cur>=N){stop();render()}},1900);render();
+  });
+  prev.addEventListener('click',()=>{stop();go(cur-1)});
+  next.addEventListener('click',()=>{stop();go(cur+1)});
+  reset.addEventListener('click',()=>{stop();svg.dataset.touched='';cur=N;render()});
+  render();
+})();
+
+/* ---- mix: constant-power crossfade, phrase on/off ---- */
+(function(){
+  const svg=$('#fig-mix svg');if(!svg)return;
+  const chk=$('#mx-phrase'),rng=$('#mx-t'),btn=$('#mx-play');
+  const set=(el,a,v)=>el&&el.setAttribute(a,v);
+  function geom(ph){const exit=ph?G.exitPhrase:G.exitEnd,x0=G.x0+(exit-G.fade)*G.px,x1=G.x0+exit*G.px;return{x0,x1,bo:x0-(ph?G.entryB*G.px:0)}}
+  function paint(){
+    const ph=chk.checked,t=rng.value/100,g=geom(ph);
+    set($('#mx-B',svg),'transform','translate('+(g.bo-G.x0)+',0)');
+    set($('#mx-win',svg),'x',g.x0);set($('#mx-win',svg),'width',g.x1-g.x0);
+    set($('#mx-skip',svg),'x',g.bo);set($('#mx-skip',svg),'width',ph?G.entryB*G.px:0);
+    const px=g.x0+t*(g.x1-g.x0);['x1','x2'].forEach(a=>set($('#mx-ph',svg),a,px));
+    const cx=60+t*380;['x1','x2'].forEach(a=>set($('#mx-cph',svg),a,cx));
+    const ann=$('#mx-ann-phrase',svg);if(ann)ann.style.display=ph?'':'none';
+    const A=Math.cos(t*Math.PI/2),B=Math.sin(t*Math.PI/2);
+    $('#ro-a').textContent=Math.round(A*100)+'%';$('#ro-b').textContent=Math.round(B*100)+'%';
+    $('#ro-bpm').textContent=((G.bpmA+G.bpmB)/2).toFixed(1);
+    $('#ro-ph').textContent=t<.01?'B entra':t<.45?'B sube, graves de A':t<.6?'Cambio de graves':t<.99?'A se retira':'Solo B';
+  }
+  chk.addEventListener('change',paint);rng.addEventListener('input',()=>{stopAnim();paint()});
+  let raf=null,t0=0;
+  function stopAnim(){if(raf){cancelAnimationFrame(raf);raf=null;btn.textContent='▶ Animar'}}
+  btn.addEventListener('click',()=>{
+    if(raf){stopAnim();return}
+    btn.textContent='❚❚ Pausar';const from=+rng.value>=100?0:+rng.value;t0=performance.now()-from/100*6000;
+    (function loop(now){const p=Math.min(1,(now-t0)/6000);rng.value=Math.round(p*100);paint();if(p<1)raf=requestAnimationFrame(loop);else{raf=null;btn.textContent='▶ Animar'}})(performance.now());
+    raf=requestAnimationFrame(function loop(now){const p=Math.min(1,(now-t0)/6000);rng.value=Math.round(p*100);paint();if(p<1)raf=requestAnimationFrame(loop);else{raf=null;btn.textContent='▶ Animar'}});
+  });
+  paint();
+})();
+})();
+</script>
+</body>
+</html>

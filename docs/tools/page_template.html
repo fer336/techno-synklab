@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SYNK//LAB · Arquitectura interactiva</title>
+<meta name="description" content="Diagramas interactivos de SYNK//LAB: arquitectura, flujo del agente DJ, mezcla por frases y cadena de audio.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080b0b;--card:#0f1413;--ink:#edf1e9;--muted:#a3aea6;--soft:#7f8b84;--line:#26302b;--line2:#3a4640;--lime:#caff1a;--link:#8ab4e8}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 'DM Sans',system-ui,sans-serif}
+a{color:inherit}
+code{font:500 .86em 'DM Mono',ui-monospace,monospace;background:#151c19;border:1px solid var(--line);padding:1px 6px;border-radius:4px;color:#dfe7de}
+header.top{position:sticky;top:0;z-index:5;background:rgba(8,11,11,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1080px;margin:0 auto;padding:0 20px;height:54px;display:flex;align-items:center;gap:22px}
+.brand{font:800 22px 'Barlow Condensed','Arial Narrow',Impact,sans-serif;letter-spacing:-.3px;text-decoration:none;white-space:nowrap}
+.brand span{color:var(--lime)}
+nav.top-nav{display:flex;gap:4px;margin-left:auto;overflow:auto}
+nav.top-nav a{font:500 11.5px 'DM Mono',ui-monospace,monospace;letter-spacing:.06em;color:var(--soft);text-decoration:none;padding:7px 10px;border-radius:6px;white-space:nowrap;text-transform:uppercase}
+nav.top-nav a:hover,nav.top-nav a:focus-visible{color:var(--ink);background:#0d1310;outline:none}
+main{max-width:1080px;margin:0 auto;padding:0 20px 80px}
+.hero{padding:54px 0 18px}
+.eyebrow{font:500 11px 'DM Mono',ui-monospace,monospace;letter-spacing:.16em;color:var(--lime);text-transform:uppercase}
+h1{font:800 clamp(44px,8vw,84px)/.92 'Barlow Condensed','Arial Narrow',Impact,sans-serif;margin:10px 0 14px;letter-spacing:-1px}
+h1 span{color:var(--lime)}
+.lead{color:var(--muted);max-width:68ch;margin:0}
+section{padding:54px 0 6px;border-top:1px solid var(--line);margin-top:42px}
+h2{font:800 clamp(30px,5vw,44px)/1 'Barlow Condensed','Arial Narrow',Impact,sans-serif;margin:8px 0 10px}
+section>p.intro{color:var(--muted);max-width:70ch;margin:0 0 22px}
+.fig{border:1px solid var(--line);border-radius:10px;background:#080b0b;padding:8px;overflow:hidden}
+.fig svg{display:block;width:100%;height:auto}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0 0}
+.btn{font:500 12px 'DM Mono',ui-monospace,monospace;letter-spacing:.05em;color:var(--ink);background:var(--card);border:1px solid var(--line2);border-radius:6px;padding:8px 13px;cursor:pointer;transition:border-color .15s,color .15s,background .15s}
+.btn:hover{border-color:var(--lime);color:var(--lime)}
+.btn:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
+.btn.primary{background:var(--lime);color:#10160d;border-color:var(--lime);font-weight:500}
+.btn.primary:hover{background:#d8ff4d;color:#10160d}
+.btn[disabled]{opacity:.4;cursor:default}
+.hint{font:400 12px 'DM Mono',ui-monospace,monospace;color:var(--soft);margin-left:auto}
+.panel{margin-top:14px;border:1px solid var(--line);border-left:2px solid var(--lime);border-radius:8px;background:var(--card);padding:16px 18px;min-height:112px}
+.panel h3{margin:0 0 2px;font:800 22px 'Barlow Condensed','Arial Narrow',Impact,sans-serif;letter-spacing:.2px}
+.panel .where{font:400 12px 'DM Mono',ui-monospace,monospace;color:var(--soft);margin-bottom:8px}
+.panel p{margin:0;color:var(--muted);max-width:75ch}
+.panel.idle p{color:var(--soft)}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px}
+.ro{border:1px solid var(--line);border-radius:8px;background:var(--card);padding:10px 14px}
+.ro b{display:block;font:800 30px/1 'Barlow Condensed','Arial Narrow',Impact,sans-serif}
+.ro small{font:400 11px 'DM Mono',ui-monospace,monospace;color:var(--soft);letter-spacing:.06em;text-transform:uppercase}
+.ro.lime b{color:var(--lime)}
+label.sw{display:inline-flex;align-items:center;gap:8px;font:500 12px 'DM Mono',ui-monospace,monospace;color:var(--muted);cursor:pointer}
+label.sw input{accent-color:var(--lime)}
+input[type=range]{accent-color:var(--lime);flex:1 1 220px;min-width:180px}
+.step-cap{margin-top:14px;border:1px solid var(--line);border-radius:8px;background:var(--card);padding:14px 18px;color:var(--muted);min-height:64px}
+.step-cap b{font:500 12px 'DM Mono',ui-monospace,monospace;color:var(--lime);letter-spacing:.1em;margin-right:8px}
+footer{max-width:1080px;margin:0 auto;padding:28px 20px 60px;border-top:1px solid var(--line);color:var(--soft);font:400 12px 'DM Mono',ui-monospace,monospace}
+
+/* diagram interactivity */
+.n.is-pick{cursor:pointer}
+.n.is-pick:hover rect,.n.is-pick:focus-visible rect{stroke:#9aa79f}
+.n:focus,.n:focus-visible{outline:none}
+.n:focus-visible rect{stroke:var(--lime);stroke-width:2}
+svg.has-active .n:not(.is-active){opacity:.42}
+svg.has-active .e:not(.rel){opacity:.3}
+svg.has-active .al-g:not(.rel){opacity:.3}
+.n.is-active rect{stroke:var(--lime);stroke-width:2}
+svg .e.rel{stroke:var(--lime)!important;stroke-width:1.8;opacity:1}
+.n,.e,.al-g{transition:opacity .18s}
+/* sequence: static-first, JS enhances */
+svg.motion-ready .msg{transition:opacity .35s}
+svg.motion-ready .msg.off{opacity:.12}
+svg.motion-ready .msg.now .e{stroke:var(--lime);stroke-width:1.9}
+svg.motion-ready .msg.now .al{fill:var(--ink)}
+/* mix */
+#mx-B{transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+#mx-win,#mx-skip{transition:x .5s cubic-bezier(.2,.8,.2,1),width .5s cubic-bezier(.2,.8,.2,1)}
+@media (prefers-reduced-motion:reduce){#mx-B,#mx-win,#mx-skip,svg.motion-ready .msg,.n,.e,.al-g{transition:none}}
+@media (max-width:640px){.hint{margin-left:0;width:100%}.top-in{gap:10px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <a class="brand" href="#top">SYNK<span>//</span>LAB</a>
+  <nav class="top-nav" aria-label="Secciones">
+    <a href="#arquitectura">Arquitectura</a><a href="#agente">Agente</a><a href="#mezcla">Mezcla</a><a href="#audio">Audio</a>
+  </nav>
+</div></header>
+<main id="top">
+  <div class="hero">
+    <div class="eyebrow">Documentación interactiva</div>
+    <h1>CÓMO FUNCIONA <span>SYNK//LAB</span></h1>
+    <p class="lead">Cuatro diagramas para entender el sistema. Toca los bloques, recorre los pasos del agente y mueve la mezcla a mano. Esta página es estática: no necesita servidor.</p>
+  </div>
+
+  <section id="arquitectura">
+    <div class="eyebrow">01 · Arquitectura</div>
+    <h2>Tres piezas locales</h2>
+    <p class="intro">La pestaña del navegador es la única que suena. El servidor la acompaña y hace de puente. El agente DJ es opcional y consulta a una CLI de IA donde ya tienes sesión iniciada.</p>
+    <div class="fig" id="fig-arch">%%ARCH%%</div>
+    <div class="panel idle" id="panel-arch" aria-live="polite"><h3>Elige un bloque</h3><div class="where">haz clic o pasa el puntero</div><p>Al elegir un bloque se resaltan sus conexiones y se explica qué hace, qué archivo lo implementa y qué límites tiene.</p></div>
+  </section>
+
+  <section id="agente">
+    <div class="eyebrow">02 · Flujo del agente</div>
+    <h2>Cómo decide cada mezcla</h2>
+    <p class="intro">Poco antes de que termine un tema, el agente le pide a la IA un plan y lo envía al mixer. Avanza paso a paso o déjalo reproducirse.</p>
+    <div class="fig" id="fig-seq">%%SEQ%%</div>
+    <div class="controls" role="group" aria-label="Controles de la secuencia">
+      <button class="btn primary" id="sq-play" type="button">▶ Reproducir</button>
+      <button class="btn" id="sq-prev" type="button">← Anterior</button>
+      <button class="btn" id="sq-next" type="button">Siguiente →</button>
+      <button class="btn" id="sq-reset" type="button">Ver completo</button>
+      <span class="hint" id="sq-count">completo · 7 pasos</span>
+    </div>
+    <div class="step-cap" id="sq-cap" aria-live="polite"><b>PASO 1–7</b>Todos los mensajes están visibles. Usa los botones para recorrerlos de a uno.</div>
+  </section>
+
+  <section id="mezcla">
+    <div class="eyebrow">03 · Mezcla por frases</div>
+    <h2>Entrar sin intro, salir donde cae la energía</h2>
+    <p class="intro">Cada barra es una frase de 16 beats. El tema que entra salta su intro y arranca en una frase con bajo y nivel parecido; el que sale se funde cuando su energía cae. Mueve el deslizador para ver el cruce.</p>
+    <div class="fig" id="fig-mix">%%MIX%%</div>
+    <div class="controls" role="group" aria-label="Controles de la mezcla">
+      <label class="sw"><input type="checkbox" id="mx-phrase" checked> Mezclar por frases</label>
+      <input type="range" id="mx-t" min="0" max="100" value="0" aria-label="Progreso de la mezcla">
+      <button class="btn" id="mx-play" type="button">▶ Animar</button>
+    </div>
+    <div class="readout" aria-live="polite">
+      <div class="ro"><b id="ro-a">100%</b><small>Volumen deck A</small></div>
+      <div class="ro lime"><b id="ro-b">0%</b><small>Volumen deck B</small></div>
+      <div class="ro"><b id="ro-bpm">128.9</b><small>BPM de ambos</small></div>
+      <div class="ro"><b id="ro-ph" style="font-size:20px;line-height:1.15">Entra B</b><small>Qué pasa ahora</small></div>
+    </div>
+  </section>
+
+  <section id="audio">
+    <div class="eyebrow">04 · Cadena de audio</div>
+    <h2>De archivo a altavoces</h2>
+    <p class="intro">Cada deck tiene su propia copia de la cadena. Los efectos se envían después del fader, así sus colas sobreviven al cruce. Toca un bloque para ver los valores reales.</p>
+    <div class="fig" id="fig-audio">%%AUDIO%%</div>
+    <div class="panel idle" id="panel-audio" aria-live="polite"><h3>Elige un bloque</h3><div class="where">haz clic o pasa el puntero</div><p>Los valores salen directamente del código de <code>static/mixer.js</code>.</p></div>
+  </section>
+</main>
+<footer>SYNK//LAB · documentación generada desde el código · los diagramas siguen el estilo de <a href="https://github.com/cathrynlavery/diagram-design">diagram-design</a> (MIT)</footer>
+
+<script>
+(function(){
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const INFO=%%INFO%%, STEPS=%%SEQSTEPS%%, G=%%GEOM%%;
+
+/* ---- clickable nodes: highlight connections + explain ---- */
+function bindNodes(figId,panelId,info){
+  const svg=$('#'+figId+' svg'),panel=$('#'+panelId);if(!svg||!panel)return;
+  const idle=panel.innerHTML;let pinned=null;
+  function paint(id){
+    $$('.n',svg).forEach(n=>n.classList.toggle('is-active',n.dataset.id===id));
+    const node=id&&$('.n[data-id="'+id+'"]',svg);
+    const rel=node?(node.dataset.edges||'').split(',').filter(Boolean):[];
+    $$('.e',svg).forEach(e=>e.classList.toggle('rel',rel.includes(e.id)));
+    $$('.al-g',svg).forEach(g=>g.classList.toggle('rel',rel.includes(g.dataset.edge)));
+    svg.classList.toggle('has-active',!!id);
+    if(id&&info[id]){const [t,w,p]=info[id];panel.classList.remove('idle');panel.innerHTML='<h3></h3><div class="where"></div><p></p>';
+      $('h3',panel).textContent=t;$('.where',panel).textContent=w;$('p',panel).textContent=p}
+    else{panel.classList.add('idle');panel.innerHTML=idle}
+  }
+  $$('.n[data-id]',svg).forEach(n=>{
+    const id=n.dataset.id;if(!info[id])return;n.classList.add('is-pick');
+    n.addEventListener('mouseenter',()=>paint(id));
+    n.addEventListener('mouseleave',()=>paint(pinned));
+    n.addEventListener('focus',()=>paint(id));
+    n.addEventListener('blur',()=>paint(pinned));
+    n.addEventListener('click',()=>{pinned=pinned===id?null:id;paint(pinned)});
+    n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pinned=pinned===id?null:id;paint(pinned)}});
+  });
+}
+bindNodes('fig-arch','panel-arch',INFO.arch);
+bindNodes('fig-audio','panel-audio',INFO.audio);
+
+/* ---- sequence: static-first, steps are an enhancement ---- */
+(function(){
+  const svg=$('#fig-seq svg');if(!svg)return;
+  const play=$('#sq-play'),prev=$('#sq-prev'),next=$('#sq-next'),reset=$('#sq-reset'),count=$('#sq-count'),cap=$('#sq-cap');
+  const N=STEPS.length;let cur=N,timer=null;
+  function render(){
+    svg.classList.add('motion-ready');
+    $$('.msg',svg).forEach(m=>{const s=+m.dataset.step;m.classList.toggle('off',s>cur);m.classList.toggle('now',cur<N&&s===cur)});
+    if(cur>=1&&cur<=N&&cur<N+1){}
+    if(cur===N&&!timer&&!svg.dataset.touched){cap.innerHTML='<b>PASO 1–7</b>Todos los mensajes están visibles. Usa los botones para recorrerlos de a uno.';count.textContent='completo · '+N+' pasos'}
+    else if(cur===0){cap.innerHTML='<b>INICIO</b>El mixer está reproduciendo un tema. Todavía no pasó nada.';count.textContent='paso 0 de '+N}
+    else{cap.innerHTML='<b>PASO '+cur+'</b>'+STEPS[cur-1][1];count.textContent='paso '+cur+' de '+N}
+    prev.disabled=cur<=0;next.disabled=cur>=N;
+    play.textContent=timer?'❚❚ Pausar':(cur>=N?'↻ Reproducir':'▶ Continuar');
+  }
+  function stop(){if(timer){clearInterval(timer);timer=null}}
+  function go(n){svg.dataset.touched='1';cur=Math.max(0,Math.min(N,n));render()}
+  play.addEventListener('click',()=>{
+    if(timer){stop();render();return}
+    if(cur>=N)go(0);
+    timer=setInterval(()=>{if(cur>=N){stop();render();return}go(cur+1);if(cur>=N){stop();render()}},1900);render();
+  });
+  prev.addEventListener('click',()=>{stop();go(cur-1)});
+  next.addEventListener('click',()=>{stop();go(cur+1)});
+  reset.addEventListener('click',()=>{stop();svg.dataset.touched='';cur=N;render()});
+  render();
+})();
+
+/* ---- mix: constant-power crossfade, phrase on/off ---- */
+(function(){
+  const svg=$('#fig-mix svg');if(!svg)return;
+  const chk=$('#mx-phrase'),rng=$('#mx-t'),btn=$('#mx-play');
+  const set=(el,a,v)=>el&&el.setAttribute(a,v);
+  function geom(ph){const exit=ph?G.exitPhrase:G.exitEnd,x0=G.x0+(exit-G.fade)*G.px,x1=G.x0+exit*G.px;return{x0,x1,bo:x0-(ph?G.entryB*G.px:0)}}
+  function paint(){
+    const ph=chk.checked,t=rng.value/100,g=geom(ph);
+    set($('#mx-B',svg),'transform','translate('+(g.bo-G.x0)+',0)');
+    set($('#mx-win',svg),'x',g.x0);set($('#mx-win',svg),'width',g.x1-g.x0);
+    set($('#mx-skip',svg),'x',g.bo);set($('#mx-skip',svg),'width',ph?G.entryB*G.px:0);
+    const px=g.x0+t*(g.x1-g.x0);['x1','x2'].forEach(a=>set($('#mx-ph',svg),a,px));
+    const cx=60+t*380;['x1','x2'].forEach(a=>set($('#mx-cph',svg),a,cx));
+    const ann=$('#mx-ann-phrase',svg);if(ann)ann.style.display=ph?'':'none';
+    const A=Math.cos(t*Math.PI/2),B=Math.sin(t*Math.PI/2);
+    $('#ro-a').textContent=Math.round(A*100)+'%';$('#ro-b').textContent=Math.round(B*100)+'%';
+    $('#ro-bpm').textContent=((G.bpmA+G.bpmB)/2).toFixed(1);
+    $('#ro-ph').textContent=t<.01?'B entra':t<.45?'B sube, graves de A':t<.6?'Cambio de graves':t<.99?'A se retira':'Solo B';
+  }
+  chk.addEventListener('change',paint);rng.addEventListener('input',()=>{stopAnim();paint()});
+  let raf=null,t0=0;
+  function stopAnim(){if(raf){cancelAnimationFrame(raf);raf=null;btn.textContent='▶ Animar'}}
+  btn.addEventListener('click',()=>{
+    if(raf){stopAnim();return}
+    btn.textContent='❚❚ Pausar';const from=+rng.value>=100?0:+rng.value;t0=performance.now()-from/100*6000;
+    (function loop(now){const p=Math.min(1,(now-t0)/6000);rng.value=Math.round(p*100);paint();if(p<1)raf=requestAnimationFrame(loop);else{raf=null;btn.textContent='▶ Animar'}})(performance.now());
+    raf=requestAnimationFrame(function loop(now){const p=Math.min(1,(now-t0)/6000);rng.value=Math.round(p*100);paint();if(p<1)raf=requestAnimationFrame(loop);else{raf=null;btn.textContent='▶ Animar'}});
+  });
+  paint();
+})();
+})();
+</script>
+</body>
+</html>
