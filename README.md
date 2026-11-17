@@ -179,6 +179,10 @@ Tras regenerar, haz commit de `docs/` y push a `main`: GitHub Pages republica la
 
 Los diagramas siguen la gramática editorial de [diagram-design](https://github.com/cathrynlavery/diagram-design) (MIT): sin sombras, bordes finos, conectores ortogonales y uno o dos nodos de acento.
 
+## Licencia
+
+[MIT](LICENSE). La licencia cubre el código de este repositorio; `yt-dlp`, `ffmpeg` y el resto de dependencias mantienen la suya, y el contenido que descargues o importes es responsabilidad tuya.
+
 <details>
 <summary>Scrapling (ejemplo opcional)</summary>
 
