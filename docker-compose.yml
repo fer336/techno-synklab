@@ -1,0 +1,44 @@
+# Production stack for Portainer (Docker Swarm). INFRASTRUCTURE.md INF-401/411:
+# this file is the desired state; the release pipeline pins the image tag below. Never use :latest.
+# Prerequisites in Portainer: the external secret "techno_synklab_env" and the external overlay network "proxy".
+services:
+  app:
+    image: ghcr.io/fer336/techno-synklab:v0.3.0
+    secrets:
+      - techno_synklab_env
+    environment:
+      PROJECT_NAME: techno_synklab
+      APP_ENV: production
+      # Hosted mode: with 0, only real loopback clients reach the agent and download endpoints, so they stay disabled.
+      SYNKLAB_IN_CONTAINER: "0"
+    networks:
+      - proxy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=4).status==200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+    deploy:
+      replicas: 1
+      update_config:
+        order: start-first
+        failure_action: rollback
+      restart_policy:
+        condition: any
+      # Traefik routing (assumed reverse proxy). Adjust the entrypoint / resolver names to your Traefik.
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=proxy
+        - traefik.http.routers.techno-synklab.rule=Host(`synklab.qeva-ai.com`)
+        - traefik.http.routers.techno-synklab.entrypoints=websecure
+        - traefik.http.routers.techno-synklab.tls.certresolver=letsencrypt
+        - traefik.http.services.techno-synklab.loadbalancer.server.port=8000
+
+networks:
+  proxy:
+    external: true
+
+secrets:
+  techno_synklab_env:
+    external: true

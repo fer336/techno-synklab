@@ -6,3 +6,6 @@ __pycache__/
 *.log
 desktop.png
 mobile.png
+
+# Local configuration, never versioned (INFRASTRUCTURE.md INF-601)
+.env

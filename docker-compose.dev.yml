@@ -1,4 +1,5 @@
-# docker compose up -d   ->  http://localhost:8000
+# Local development only: builds the image from this checkout.
+# docker compose -f docker-compose.dev.yml up -d   ->  http://localhost:8000
 services:
   synklab:
     build: .
