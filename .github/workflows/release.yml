@@ -1,0 +1,109 @@
+name: Release
+
+# Production is release-driven (INFRASTRUCTURE.md INF-300): creating a vX.Y.Z release is the only trigger.
+on:
+  release:
+    types: [published]
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  packages: write
+
+env:
+  HEALTH_URL: https://synklab.qeva-ai.com
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: 1. Validate SemVer tag
+        run: |
+          if ! [[ "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Tag '$GITHUB_REF_NAME' is not vMAJOR.MINOR.PATCH"
+            exit 1
+          fi
+
+      - name: Image name (GHCR requires lowercase)
+        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: The release must come from main
+        run: |
+          git fetch origin main
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main || { echo "::error::$GITHUB_REF_NAME is not reachable from main"; exit 1; }
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 3. Tests
+        run: |
+          pip install -r requirements.txt
+          python -m unittest discover -s tests -v
+
+      - name: Log in to the registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 5-8. Build, tag and publish (published tags are never overwritten, INF-112)
+        run: |
+          # Only a definite "not found" means the tag is free; any other error (network, auth) must not trigger a re-publish.
+          if out=$(docker manifest inspect "$IMAGE:$GITHUB_REF_NAME" 2>&1); then
+            echo "Image $IMAGE:$GITHUB_REF_NAME already exists: reusing it."
+          elif echo "$out" | grep -qiE "no such manifest|manifest unknown|not found"; then
+            docker build --build-arg APP_VERSION="$GITHUB_REF_NAME" -t "$IMAGE:$GITHUB_REF_NAME" .
+            docker push "$IMAGE:$GITHUB_REF_NAME"
+          else
+            echo "::error::could not tell whether the tag exists: $out"
+            exit 1
+          fi
+
+      - name: 10-11. Pin the tag in docker-compose.yml and push it
+        run: |
+          git fetch origin main
+          git checkout main
+          sed -i -E "s#(image: ${IMAGE}:)v[0-9]+\.[0-9]+\.[0-9]+#\1${GITHUB_REF_NAME}#" docker-compose.yml
+          grep -q "image: ${IMAGE}:${GITHUB_REF_NAME}" docker-compose.yml || { echo "::error::could not pin the tag"; exit 1; }
+          if git diff --quiet; then
+            echo "docker-compose.yml already pins ${GITHUB_REF_NAME}."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -am "chore(release): pin ${GITHUB_REF_NAME} in docker-compose.yml"
+            git push origin main
+          fi
+
+      - name: 12-13. Trigger the Portainer deploy (only after the compose is on main, INF-311)
+        env:
+          PORTAINER_WEBHOOK_URL: ${{ secrets.PORTAINER_WEBHOOK_URL }}
+        run: |
+          test -n "$PORTAINER_WEBHOOK_URL" || { echo "::error::PORTAINER_WEBHOOK_URL is not set in the production environment"; exit 1; }
+          curl -fsS --retry 3 --max-time 60 -X POST "$PORTAINER_WEBHOOK_URL" >/dev/null
+          echo "Deploy triggered."
+
+      - name: 15. Verify health AND version (INF-503/504)
+        run: |
+          for i in $(seq 1 30); do
+            health=$(curl -fsS --max-time 10 "$HEALTH_URL/health" 2>/dev/null | jq -r '.status' 2>/dev/null || true)
+            version=$(curl -fsS --max-time 10 "$HEALTH_URL/version" 2>/dev/null | jq -r '.version' 2>/dev/null || true)
+            echo "attempt $i: health=${health:-n/a} version=${version:-n/a} (expected $GITHUB_REF_NAME)"
+            if [ "$health" = "ok" ] && [ "$version" = "$GITHUB_REF_NAME" ]; then
+              echo "Production is healthy on $GITHUB_REF_NAME."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::Production did not report healthy on $GITHUB_REF_NAME within 5 minutes."
+          exit 1

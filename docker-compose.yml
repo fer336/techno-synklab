@@ -1,14 +1,57 @@
-# docker compose up -d   ->  http://localhost:8000
+# Production stack for Portainer (Docker Swarm + Traefik). INFRASTRUCTURE.md INF-401/411:
+# this file is the desired state; the release pipeline pins the image tag below. Never use :latest.
+# Prerequisites in Portainer: the external secret "techno_synklab_env" (see docs/DEPLOYMENT.md);
+# the external overlay network "network_public" already exists (shared with Traefik).
+version: "3.8"
+
 services:
-  synklab:
-    build: .
-    image: synklab:latest
-    container_name: synklab
-    restart: unless-stopped
-    ports:
-      - "127.0.0.1:8000:8000"   # keep it on loopback: the agent and download endpoints are local-only
+  app:
+    image: ghcr.io/fer336/techno-synklab:v0.3.0
+    secrets:
+      - techno_synklab_env
     environment:
-      MUSICBRAINZ_USER_AGENT: "${MUSICBRAINZ_USER_AGENT:-SynkLab/0.2 (set-your-contact@example.com)}"
-    volumes:
-      - "${SYNKLAB_INBOX:-./inbox}:/data/inbox"
-    user: "${SYNKLAB_UID:-1000}:${SYNKLAB_GID:-1000}"
+      PROJECT_NAME: techno_synklab
+      APP_ENV: production
+      # Hosted mode: with 0, only real loopback clients reach the agent and download endpoints, so they stay disabled.
+      SYNKLAB_IN_CONTAINER: "0"
+      # Pinned here so the secret can never switch these local-only features on (INF-211).
+      SYNKLAB_ALLOW_REMOTE_DOWNLOAD: "0"
+    networks:
+      - network_public
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=4).status==200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        order: start-first
+        failure_action: rollback
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 5
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=network_public"
+        - "traefik.http.routers.techno-synklab.rule=Host(`synklab.qeva-ai.com`)"
+        - "traefik.http.routers.techno-synklab.entrypoints=websecure"
+        - "traefik.http.routers.techno-synklab.tls.certresolver=letsencryptresolver"
+        - "traefik.http.routers.techno-synklab.service=techno-synklab"
+        - "traefik.http.services.techno-synklab.loadbalancer.server.port=8000"
+        - "traefik.http.services.techno-synklab.loadbalancer.server.scheme=http"
+        - "traefik.http.middlewares.techno-synklab-security.headers.stsseconds=31536000"
+        - "traefik.http.middlewares.techno-synklab-security.headers.stsincludesubdomains=true"
+        - "traefik.http.middlewares.techno-synklab-security.headers.contenttypenosniff=true"
+        - "traefik.http.routers.techno-synklab.middlewares=techno-synklab-security"
+
+networks:
+  network_public:
+    external: true
+
+secrets:
+  techno_synklab_env:
+    external: true

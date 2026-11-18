@@ -1,0 +1,35 @@
+# Machine-readable instantiation of INFRASTRUCTURE.md section 0. Keep both in sync (INF-001).
+standard_version: 2.1.0
+
+org: fer336
+project: techno-synklab
+project_snake: techno_synklab
+track: app            # INF-003: exactly one track
+profile: A            # INF-003: exactly one profile
+
+registry: ghcr.io
+image_base: ghcr.io/fer336/techno-synklab
+runtime_manager: portainer
+secret_name: techno_synklab_env      # INF-201: <project_snake>_env, mounted at /run/secrets/techno_synklab_env
+health_url: https://synklab.qeva-ai.com
+runtime_lang: python
+upstream_image: null                 # CMS track only
+
+migrations:
+  strategy: none                     # INF-320: the app has no database schema
+
+services:
+  app:
+    image: ghcr.io/fer336/techno-synklab
+    needs_secret: true               # MUSICBRAINZ_USER_AGENT (contact string) lives in the secret, not in the compose
+    stateful: false
+
+frontend_build_args: []              # INF-250: the UI is static HTML, there are no public build-time variables
+
+ci_secrets:                          # INF-240: only what is needed to build and deploy
+  - PORTAINER_WEBHOOK_URL            # GitHub environment "production"
+registry_auth: GITHUB_TOKEN          # built-in; no extra registry secret needed
+
+endpoints:
+  health: /health
+  version: /version

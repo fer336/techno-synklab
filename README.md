@@ -24,7 +24,8 @@ SYNK//LAB es un prototipo local con diseño *Dark Lime Cyberpunk*, hecho con HTM
 - **Agente de IA opcional:** una CLI donde ya tienes sesión (Claude o Codex) decide duración, EQ, efecto y filtro de cada transición. No usa claves de API. [Ver flujo](#flujo-del-agente).
 - **Catálogo:** búsqueda de metadatos en MusicBrainz (por texto, no por sonido), sellos y lanzamientos.
 - **Descarga opcional** de enlaces de YouTube o SoundCloud con `yt-dlp` y `ffmpeg`, siempre por orden tuya y solo en local.
-- Diseño responsivo, sin cuentas ni base de datos. El set se guarda en el navegador y se exporta como JSON o CSV.
+- **Versión móvil** (hasta 770 px): interfaz propia con cinco pantallas (Mezcla, Cola, Importar, Agente y Ajustes) pensada para usarse con una mano. Durante una mezcla se ven los dos decks a la vez. Descubrir, Analizador, Sets y Sellos siguen disponibles desde *Ajustes › Más herramientas*.
+- Sin cuentas ni base de datos. El set se guarda en el navegador y se exporta como JSON o CSV.
 
 > Los archivos de audio se procesan **en tu navegador** y nunca se suben a ningún servidor.
 
@@ -47,7 +48,7 @@ Construye la imagen con todas las dependencias (`ffmpeg` y `yt-dlp` incluidos), 
 
 Ejemplo: `curl -fsSL … | SYNKLAB_PORT=8010 sh`. Para quitarlo: `curl -fsSL … | sh -s -- uninstall` (la carpeta Inbox se conserva).
 
-También se puede usar desde un clon: `docker compose up -d`.
+También se puede usar desde un clon: `docker compose -f docker-compose.dev.yml up -d`.
 
 <details>
 <summary>Sin Docker (ejecución local)</summary>
@@ -134,6 +135,15 @@ Sin rejilla confiable, cada tema empieza desde el principio y suena hasta el fin
 
 Cada deck tiene su propia copia de la cadena. Los efectos se envían **después del fader**, así sus colas sobreviven al crossfade. La salida común pasa por un compresor (umbral −4 dB, ratio 16:1) y se duplica en una grabación del set.
 
+## Despliegue en producción (Portainer)
+
+El proyecto sigue el estándar de [`INFRASTRUCTURE.md`](INFRASTRUCTURE.md) (vía `app`, perfil `A`) y se publica en **https://synklab.qeva-ai.com**:
+
+- Se despliega **solo al crear una release** `vX.Y.Z`: el pipeline prueba, publica una imagen inmutable en `ghcr.io/fer336/techno-synklab`, fija el tag en `docker-compose.yml`, dispara el webhook de Portainer y verifica `/health` y `/version`.
+- La configuración de runtime es **un único secret** (`techno_synklab_env`); la interfaz no tiene variables de build.
+- En modo hospedado el agente de IA y las descargas quedan deshabilitados (son locales por diseño).
+- Paso a paso, rollback y contenido del secret: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
+
 ## Seguridad y privacidad
 
 - Los endpoints del agente (`/api/agent/*`) y de descarga **solo aceptan clientes locales**, con comprobación de `Host` y `Origin` contra DNS rebinding y CSRF.
@@ -150,12 +160,15 @@ Cada deck tiene su propia copia de la cadena. Los efectos se envían **después 
 ├── agent_bridge.py      # puente agente ⇄ pestaña (cola de comandos, eventos)
 ├── downloader.py        # descargas opcionales con yt-dlp
 ├── netguard.py          # comprobaciones de "solo local"
+├── config.py            # carga de configuración (secret > .env) y /health, /version
 ├── dj_agent.py          # agente DJ (claude / codex / reglas)
-├── static/              # index.html + mixer.js (todo el audio)
+├── static/              # index.html + mixer.js (audio) + mobile.js/css (interfaz móvil)
 ├── docs/                # diagramas interactivos y SVG animados
 │   └── tools/           # generador de los diagramas
 ├── tests/               # pruebas del guard de red
-├── Dockerfile · docker-compose.yml · install.sh
+├── Dockerfile · install.sh
+├── docker-compose.yml   # stack de producción (Portainer) · docker-compose.dev.yml: desarrollo local
+├── INFRASTRUCTURE.md · infra.project.yml · AGENTS.md · .github/workflows/
 └── AGENT_API.md         # referencia de la API del agente
 ```
 

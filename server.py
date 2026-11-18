@@ -7,6 +7,11 @@ import re
 import time
 from urllib.parse import urlsplit
 
+import config
+
+config.load()      # secret (production) or .env (development); never overrides the process environment
+config.validate()  # fail fast in production if a required variable is missing
+
 import httpx
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import FileResponse
@@ -16,10 +21,23 @@ from pathlib import Path
 from downloader import router as download_router
 from agent_bridge import router as agent_router
 
-app = FastAPI(title="SYNK//LAB", version="0.1.0")
+app = FastAPI(title="SYNK//LAB", version=config.version())
 app.include_router(download_router)
 app.include_router(agent_router)
 ROOT = Path(__file__).resolve().parent
+
+
+@app.get("/health")
+def health():
+    """Liveness (INFRASTRUCTURE.md INF-500)."""
+    return {"status": "ok"}
+
+
+@app.get("/version")
+def version():
+    """The release that is actually running (INF-502): injected at build time as APP_VERSION."""
+    return {"version": config.version()}
+
 MB = "https://musicbrainz.org/ws/2"
 UA = os.environ.get("MUSICBRAINZ_USER_AGENT", "SynkLabPrototype/0.1 (https://example.org/synklab; contact: developer@example.org)")
 rate_lock = asyncio.Lock()

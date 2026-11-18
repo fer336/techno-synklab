@@ -1,8 +1,41 @@
+# Python
 .venv/
+venv/
 __pycache__/
 *.pyc
+.pytest_cache/
+*.egg-info/
+
+# Tooling and local sessions
 .playwright-mcp/
 .atl/
 *.log
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Old design screenshots
 desktop.png
 mobile.png
+
+# Local configuration and secrets, never versioned (INFRASTRUCTURE.md INF-600/601)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+secrets/
+techno_synklab_env
+
+# Downloaded or imported audio: local data, and possibly not yours to redistribute
+inbox/
+*.mp3
+*.wav
+*.flac
+*.m4a
+*.ogg
+*.info.json
