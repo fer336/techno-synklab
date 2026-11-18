@@ -1,6 +1,9 @@
-# Production stack for Portainer (Docker Swarm). INFRASTRUCTURE.md INF-401/411:
+# Production stack for Portainer (Docker Swarm + Traefik). INFRASTRUCTURE.md INF-401/411:
 # this file is the desired state; the release pipeline pins the image tag below. Never use :latest.
-# Prerequisites in Portainer: the external secret "techno_synklab_env" and the external overlay network "proxy".
+# Prerequisites in Portainer: the external secret "techno_synklab_env" (see docs/DEPLOYMENT.md);
+# the external overlay network "network_public" already exists (shared with Traefik).
+version: "3.8"
+
 services:
   app:
     image: ghcr.io/fer336/techno-synklab:v0.3.0
@@ -14,7 +17,7 @@ services:
       # Pinned here so the secret can never switch these local-only features on (INF-211).
       SYNKLAB_ALLOW_REMOTE_DOWNLOAD: "0"
     networks:
-      - proxy
+      - network_public
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=4).status==200 else 1)"]
       interval: 30s
@@ -22,23 +25,31 @@ services:
       start_period: 15s
       retries: 3
     deploy:
+      mode: replicated
       replicas: 1
       update_config:
         order: start-first
         failure_action: rollback
       restart_policy:
-        condition: any
-      # Traefik routing (assumed reverse proxy). Adjust the entrypoint / resolver names to your Traefik.
+        condition: on-failure
+        delay: 10s
+        max_attempts: 5
       labels:
-        - traefik.enable=true
-        - traefik.docker.network=proxy
-        - traefik.http.routers.techno-synklab.rule=Host(`synklab.qeva-ai.com`)
-        - traefik.http.routers.techno-synklab.entrypoints=websecure
-        - traefik.http.routers.techno-synklab.tls.certresolver=letsencrypt
-        - traefik.http.services.techno-synklab.loadbalancer.server.port=8000
+        - "traefik.enable=true"
+        - "traefik.docker.network=network_public"
+        - "traefik.http.routers.techno-synklab.rule=Host(`synklab.qeva-ai.com`)"
+        - "traefik.http.routers.techno-synklab.entrypoints=websecure"
+        - "traefik.http.routers.techno-synklab.tls.certresolver=letsencryptresolver"
+        - "traefik.http.routers.techno-synklab.service=techno-synklab"
+        - "traefik.http.services.techno-synklab.loadbalancer.server.port=8000"
+        - "traefik.http.services.techno-synklab.loadbalancer.server.scheme=http"
+        - "traefik.http.middlewares.techno-synklab-security.headers.stsseconds=31536000"
+        - "traefik.http.middlewares.techno-synklab-security.headers.stsincludesubdomains=true"
+        - "traefik.http.middlewares.techno-synklab-security.headers.contenttypenosniff=true"
+        - "traefik.http.routers.techno-synklab.middlewares=techno-synklab-security"
 
 networks:
-  proxy:
+  network_public:
     external: true
 
 secrets:

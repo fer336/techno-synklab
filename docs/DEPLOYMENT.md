@@ -10,7 +10,7 @@ visitor's own files in their browser. The AI agent and the downloads are local-o
 
 | Topic | Decision |
 |---|---|
-| Track / profile | `app` / `A` (single replica; Swarm-mode Portainer endpoint, because the standard requires an external secret) |
+| Track / profile | `app` / `A` (single replica; Swarm-mode Portainer endpoint with Traefik, confirmed from the server's existing stacks) |
 | Migrations (INF-320) | None: the app has no database schema |
 | Volumes (INF-513) | None in production. The `inbox` volume exists only in the local installer and in `docker-compose.dev.yml` |
 | Backups | Not applicable: no persistent data |
@@ -28,15 +28,16 @@ MUSICBRAINZ_USER_AGENT=SynkLab/0.3 (<a real contact: email or URL>)
 MusicBrainz requires a real contact in the User-Agent; in production the app refuses to start with a missing or placeholder value.
 One secret for the whole project: do not create one per variable. To rotate it, replace the secret and restart the service (INF-241).
 
-### 2. The overlay network `proxy`
-The stack joins an **external** overlay network named `proxy`, shared with the reverse proxy. Create it once if it does not exist.
+### 2. The overlay network `network_public`
+The stack joins the **external** overlay network `network_public`, the one Traefik already uses. Nothing to create if your other stacks run on it.
 
 ### 3. The stack
 *Stacks → Add stack → Repository*: this repository, branch `main`, compose path `docker-compose.yml`.
 Enable the **webhook** for the stack and copy its URL.
 
-> **Assumed reverse proxy: Traefik.** `docker-compose.yml` carries Traefik labels (`websecure`, `letsencrypt`). If you use another
-> proxy, or other entrypoint / resolver names, change those labels once; the pipeline only touches the image tag.
+> **Reverse proxy: Traefik** (same conventions as the other stacks on this server: entrypoint `websecure`, resolver
+> `letsencryptresolver`, network `network_public`). The labels add HSTS and `nosniff` headers; the HTTP→HTTPS redirect is left to
+> the Traefik entrypoint. The pipeline only ever touches the image tag.
 
 ## One-time setup in GitHub
 - *Settings → Environments → New environment* **`production`**.
