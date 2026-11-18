@@ -11,6 +11,8 @@ services:
       APP_ENV: production
       # Hosted mode: with 0, only real loopback clients reach the agent and download endpoints, so they stay disabled.
       SYNKLAB_IN_CONTAINER: "0"
+      # Pinned here so the secret can never switch these local-only features on (INF-211).
+      SYNKLAB_ALLOW_REMOTE_DOWNLOAD: "0"
     networks:
       - proxy
     healthcheck:

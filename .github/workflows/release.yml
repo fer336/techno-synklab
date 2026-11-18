@@ -14,7 +14,6 @@ permissions:
   packages: write
 
 env:
-  IMAGE: ghcr.io/${{ github.repository }}
   HEALTH_URL: https://synklab.qeva-ai.com
 
 jobs:
@@ -29,9 +28,18 @@ jobs:
             exit 1
           fi
 
+      - name: Image name (GHCR requires lowercase)
+        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: The release must come from main
+        run: |
+          git fetch origin main
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main || { echo "::error::$GITHUB_REF_NAME is not reachable from main"; exit 1; }
 
       - uses: actions/setup-python@v5
         with:
@@ -51,11 +59,15 @@ jobs:
 
       - name: 5-8. Build, tag and publish (published tags are never overwritten, INF-112)
         run: |
-          if docker manifest inspect "$IMAGE:$GITHUB_REF_NAME" >/dev/null 2>&1; then
+          # Only a definite "not found" means the tag is free; any other error (network, auth) must not trigger a re-publish.
+          if out=$(docker manifest inspect "$IMAGE:$GITHUB_REF_NAME" 2>&1); then
             echo "Image $IMAGE:$GITHUB_REF_NAME already exists: reusing it."
-          else
+          elif echo "$out" | grep -qiE "no such manifest|manifest unknown|not found"; then
             docker build --build-arg APP_VERSION="$GITHUB_REF_NAME" -t "$IMAGE:$GITHUB_REF_NAME" .
             docker push "$IMAGE:$GITHUB_REF_NAME"
+          else
+            echo "::error::could not tell whether the tag exists: $out"
+            exit 1
           fi
 
       - name: 10-11. Pin the tag in docker-compose.yml and push it

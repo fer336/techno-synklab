@@ -50,7 +50,7 @@ def load(env_file: Path | None = None) -> Path | None:
         path = env_file or Path(".env")
     if not path.is_file():
         return None
-    for key, value in parse(path.read_text(encoding="utf-8")).items():
+    for key, value in parse(path.read_text(encoding="utf-8-sig")).items():  # utf-8-sig: tolerate a BOM
         os.environ.setdefault(key, value)
     return path
 

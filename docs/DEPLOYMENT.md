@@ -44,6 +44,14 @@ Enable the **webhook** for the stack and copy its URL.
   publishing to GHCR uses the built-in `GITHUB_TOKEN`.
 - *Settings → Actions → General → Workflow permissions*: read and write (the pipeline pins the tag in `docker-compose.yml`).
 
+## Before the first release
+- `docker-compose.yml` already pins `v0.3.0`, but that image does not exist until the first release is published. Do not deploy the stack
+  from `main` before then.
+- If the GHCR package is **private**, add the registry (`ghcr.io`, a token with `read:packages`) under *Registries* in Portainer and
+  enable *with registry authentication* on the stack. Making the package public avoids this.
+- If `main` is branch-protected, the bot cannot push the pinned tag: allow `github-actions[bot]` to bypass, or pin the tag by hand.
+  Releases must be cut from `main`; the workflow refuses a tag that is not reachable from it.
+
 ## Releasing
 Create a GitHub release with a tag `vMAJOR.MINOR.PATCH` (for example `v0.3.0`). The workflow `.github/workflows/release.yml` then:
 validates the tag → runs the tests → builds and publishes `ghcr.io/fer336/techno-synklab:<tag>` (never overwriting an existing tag) →

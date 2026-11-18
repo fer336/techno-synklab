@@ -43,6 +43,15 @@ class LoadTests(unittest.TestCase):
             self.assertEqual(os.environ["SYNK_TEST_B"], "process")
             os.environ.pop("SYNK_TEST_A", None)
 
+    def test_a_utf8_bom_does_not_swallow_the_first_key(self):
+        self.secret.write_bytes(b"\xef\xbb\xbfSYNK_TEST_BOM=ok\r\nSYNK_TEST_NEXT=1\r\n")
+        with mock.patch.object(config, "secret_path", return_value=self.secret):
+            os.environ.pop("SYNK_TEST_BOM", None)
+            config.load(self.env_file)
+            self.assertEqual(os.environ.get("SYNK_TEST_BOM"), "ok")
+            os.environ.pop("SYNK_TEST_BOM", None)
+            os.environ.pop("SYNK_TEST_NEXT", None)
+
     def test_missing_files_are_not_an_error(self):
         with mock.patch.object(config, "secret_path", return_value=self.secret):
             self.assertIsNone(config.load(Path(self.tmp.name) / "absent.env"))
