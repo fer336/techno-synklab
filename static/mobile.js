@@ -36,17 +36,18 @@
   const sw = (id, title, sub) => '<button type="button" class="m-sw" role="switch" aria-checked="false" data-sw="' + id + '"><span class="tx"><b>' + title + '</b><small>' + sub + '</small></span><span class="trk"><i></i></span></button>';
   const chips = (sel, list, cls) => '<div class="m-seg ' + (cls || '') + '">' + list.map(([v, l]) => '<button type="button" data-sel="' + sel + '" data-val="' + v + '" aria-pressed="false">' + l + '</button>').join('') + '</div>';
   const tab = (id, label, icon) => '<button type="button" class="m-tab" data-go="' + id + '" aria-current="false">' + icon + '<span>' + label + '</span></button>';
-  const head = (eyebrow, title, p) => '<header class="m-head"><div class="m-eyebrow">' + eyebrow + '</div><h1>' + title + '</h1>' + (p ? '<p>' + p + '</p>' : '') + '</header>';
+  const head = (eyebrow, title, p) => '<header class="m-head"><div class="m-eyebrow">' + eyebrow + '</div><h2>' + title + '</h2>' + (p ? '<p>' + p + '</p>' : '') + '</header>';
 
+  const SEO_VIEW = window.__SEO_VIEW__ || 'autodj', BRAND_TAG = SEO_VIEW === 'autodj' && mq.matches ? 'h1' : 'div'; // phones only: the desktop <h1> is off-screen there
   const ROOT = document.createElement('div');
   ROOT.id = 'm-app';
   ROOT.innerHTML =
     // ---- Mezcla
     '<section class="m-screen on" data-s="mix" aria-label="Mezcla">' +
-    '<header class="m-top"><div class="m-brand">SYNK<span>//</span>LAB</div><div class="m-pill" id="m-pill"><i></i><span id="m-status">EN ESPERA</span></div></header>' +
+    '<header class="m-top"><' + BRAND_TAG + ' class="m-brand">SYNK<span>//</span>LAB' + (BRAND_TAG === 'h1' ? '<small>Auto DJ online para techno</small>' : '') + '</' + BRAND_TAG + '><div class="m-pill" id="m-pill"><i></i><span id="m-status">EN ESPERA</span></div></header>' +
     '<main class="m-main">' +
     '<section id="m-empty" class="m-card m-empty" hidden><h2>Tu set está vacío</h2><p>Importa tus temas para empezar a mezclar.</p><button type="button" class="m-btn lime" data-go="importar">Importar audio</button></section>' +
-    '<section id="m-single" class="m-card" aria-label="Ahora suena"><div class="m-eyebrow" id="m-s-eye">AHORA SUENA</div><h1 class="m-title" id="m-s-title">—</h1><div class="m-sub" id="m-s-sub"></div>' +
+    '<section id="m-single" class="m-card" aria-label="Ahora suena"><div class="m-eyebrow" id="m-s-eye">AHORA SUENA</div><h2 class="m-title" id="m-s-title">—</h2><div class="m-sub" id="m-s-sub"></div>' +
     '<div class="m-wave"><div class="m-exit" id="m-exit" hidden><b>SALIDA</b></div><div class="m-bars" id="m-bars"></div></div>' +
     '<div class="m-times"><span id="m-s-cur">0:00</span><span id="m-s-dur">0:00</span></div><div class="m-chips" id="m-s-chips"></div></section>' +
     '<section id="m-dual" class="m-card" aria-label="Los dos decks sonando" hidden>' +
@@ -622,4 +623,5 @@
   });
   $('m-style').addEventListener('input', () => { store.set('synklab.m.style', $('m-style').value); setText('m-cmd', agentCmd()); });
   go('mix');
+  if (mq.matches && SEO_VIEW !== 'autodj') enterMore(SEO_VIEW); // /detector-bpm-tonalidad etc. open their tool directly
 })();
