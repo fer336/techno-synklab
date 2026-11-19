@@ -6,7 +6,7 @@ version: "3.8"
 
 services:
   app:
-    image: ghcr.io/fer336/techno-synklab:v0.3.0
+    image: ghcr.io/fer336/techno-synklab:v0.4.0
     secrets:
       - techno_synklab_env
     environment:
