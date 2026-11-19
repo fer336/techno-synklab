@@ -67,6 +67,8 @@ PAGES = (
 )
 BY_PATH = {p.path: p for p in PAGES}
 ROUTES = {p.view: p.path for p in PAGES}
+CONTENT_DIR = Path(__file__).resolve().parent / "content"
+_content_cache: dict = {}
 SECTION_OPEN = '<section class="view{active}" id="view-{view}">'
 
 
@@ -126,6 +128,18 @@ def _swap_heading(html: str, view: str, to_h1: bool) -> str:
     return html[:o] + f'<{dst} class="h1">' + html[o + len(f'<{src} class="h1">'):c] + f"</{dst}>" + html[c + len(f"</{src}>"):]
 
 
+def content(view: str) -> str | None:
+    """The long-form article for a view (content/<view>.html), re-read only when the file changes."""
+    f = CONTENT_DIR / f"{view}.html"
+    if view not in ROUTES or not f.is_file():
+        return None
+    mtime = f.stat().st_mtime
+    cached = _content_cache.get(view)
+    if not cached or cached[0] != mtime:
+        _content_cache[view] = cached = (mtime, f.read_text(encoding="utf-8"))
+    return cached[1]
+
+
 def render(page: Page, html: str, base: str | None = None) -> str:
     base = base or site_url()
     html = re.sub(r"<title>.*?</title>", lambda _: f"<title>{escape(page.title)}</title>", html, count=1, flags=re.S)
@@ -135,6 +149,10 @@ def render(page: Page, html: str, base: str | None = None) -> str:
         html = html.replace(SECTION_OPEN.format(active="", view=page.view), SECTION_OPEN.format(active=" active", view=page.view), 1)
         html = _swap_heading(html, "autodj", to_h1=False)
         html = _swap_heading(html, page.view, to_h1=True)
+    body = content(page.view)
+    slot = f'<div class="seo-content" id="seo-content-{page.view}"></div>'
+    if body and slot in html:
+        html = html.replace(slot, f'<div class="seo-content" id="seo-content-{page.view}">{body}</div>', 1)
     return html
 
 
@@ -150,7 +168,7 @@ def sitemap(lastmod: datetime, base: str | None = None) -> str:
 
 def robots(base: str | None = None) -> str:
     base = base or site_url()
-    return f"User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /health\nDisallow: /version\n\nSitemap: {base}/sitemap.xml\n"
+    return f"User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /contenido/\nDisallow: /health\nDisallow: /version\n\nSitemap: {base}/sitemap.xml\n"
 
 
 NOT_FOUND_HTML = """<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>

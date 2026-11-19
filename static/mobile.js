@@ -65,6 +65,7 @@
     '<div id="m-fx-list"></div>' +
     '<div class="m-fxpads"><button type="button" data-pad="Throw">REVERB THROW</button><button type="button" data-pad="Sweep">SWEEP</button><button type="button" data-pad="Brake">FRENO</button><button type="button" data-pad="EchoOut">ECO OUT</button></div>' +
     '<button type="button" class="m-fxall" data-fxresetall>↺ RESTAURAR TODOS LOS EFECTOS</button></details>' +
+    '<details class="m-card m-about" id="m-about"><summary>Sobre este Auto DJ</summary><div class="seo-content" id="m-about-body"></div></details>' +
     '<button type="button" class="m-peek" id="m-peek" data-go="cola" hidden><div class="t"><div class="m-eyebrow">DESPUÉS · EN LA COLA</div><b id="m-peek-t"></b></div>' + IC.chev + '</button>' +
     '</main></section>' +
     // ---- Cola
@@ -623,5 +624,10 @@
   });
   $('m-style').addEventListener('input', () => { store.set('synklab.m.style', $('m-style').value); setText('m-cmd', agentCmd()); });
   go('mix');
+  if (SEO_VIEW === 'autodj') { // the home article for phones: copy the server-rendered one, or fetch it
+    const body = $('m-about-body'), src = document.getElementById('seo-content-autodj');
+    const put = (h) => { if (h) body.innerHTML = h; };
+    if (src && src.innerHTML.trim()) put(src.innerHTML); else fetch('/contenido/autodj').then((r) => (r.ok ? r.text() : '')).then(put).catch(() => {});
+  }
   if (mq.matches && SEO_VIEW !== 'autodj') enterMore(SEO_VIEW); // /detector-bpm-tonalidad etc. open their tool directly
 })();

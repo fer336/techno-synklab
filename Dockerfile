@@ -11,6 +11,7 @@ RUN pip install --no-cache-dir -r requirements.txt -r requirements-download.txt
 
 COPY server.py config.py netguard.py scrapling_adapter.py downloader.py agent_bridge.py dj_agent.py seo.py ./
 COPY static ./static
+COPY content ./content
 
 # SYNKLAB_IN_CONTAINER lets the local-only endpoints accept Docker's bridge address.
 # Always publish the port on the host loopback only: -p 127.0.0.1:8000:8000

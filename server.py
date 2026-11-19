@@ -174,6 +174,15 @@ def _register_pages() -> None:
 _register_pages()
 
 
+@app.api_route("/contenido/{view}", methods=["GET", "HEAD"], include_in_schema=False)
+def content_fragment(view: str):
+    """Article HTML for one view, fetched by the page when another tab is opened. Not meant to be indexed on its own."""
+    body = seo.content(view)
+    if body is None:
+        raise HTTPException(status_code=404, detail="Not Found")
+    return HTMLResponse(body, headers={"X-Robots-Tag": "noindex", "Cache-Control": "public, max-age=3600"})
+
+
 @app.api_route("/sitemap.xml", methods=["GET", "HEAD"], include_in_schema=False)
 def sitemap_xml():
     _, mtime = _index_html()
