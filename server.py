@@ -13,11 +13,15 @@ config.load()      # secret (production) or .env (development); never overrides 
 config.validate()  # fail fast in production if a required variable is missing
 
 import httpx
-from fastapi import FastAPI, HTTPException, Query
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.exception_handlers import http_exception_handler as default_http_exception_handler
+from fastapi.responses import HTMLResponse, PlainTextResponse, Response
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.staticfiles import StaticFiles
+from datetime import datetime, timezone
 from pathlib import Path
 
+import seo
 from downloader import router as download_router
 from agent_bridge import router as agent_router
 
@@ -144,6 +148,47 @@ class RevalidatedStatic(StaticFiles):
 
 app.mount("/static", RevalidatedStatic(directory=ROOT / "static"), name="static")
 
-@app.get("/")
-def home():
-    return FileResponse(ROOT / "static" / "index.html", headers={"Cache-Control": "no-cache"})
+_page_cache: dict = {}
+
+
+def _index_html() -> tuple[str, "datetime"]:
+    """static/index.html and its mtime, re-read only when the file changes."""
+    f = ROOT / "static" / "index.html"
+    mtime = f.stat().st_mtime
+    if _page_cache.get("mtime") != mtime:
+        _page_cache.update(mtime=mtime, html=f.read_text(encoding="utf-8"))
+    return _page_cache["html"], datetime.fromtimestamp(mtime, tz=timezone.utc)
+
+
+def _page(path: str) -> HTMLResponse:
+    html, _ = _index_html()
+    return HTMLResponse(seo.render(seo.BY_PATH[path], html), headers={"Cache-Control": "no-cache"})
+
+
+def _register_pages() -> None:
+    for page in seo.PAGES:
+        app.add_api_route(page.path, (lambda p=page.path: _page(p)), methods=["GET", "HEAD"], include_in_schema=False,
+                          response_class=HTMLResponse)
+
+
+_register_pages()
+
+
+@app.api_route("/sitemap.xml", methods=["GET", "HEAD"], include_in_schema=False)
+def sitemap_xml():
+    _, mtime = _index_html()
+    return Response(seo.sitemap(mtime), media_type="application/xml", headers={"Cache-Control": "public, max-age=3600"})
+
+
+@app.api_route("/robots.txt", methods=["GET", "HEAD"], include_in_schema=False)
+def robots_txt():
+    return PlainTextResponse(seo.robots(), headers={"Cache-Control": "public, max-age=3600"})
+
+
+@app.exception_handler(StarletteHTTPException)
+async def http_error(request: Request, exc: StarletteHTTPException):
+    """Browsers get an HTML 404 (noindex) with links to the tools; API clients keep the JSON error."""
+    path = request.url.path
+    if exc.status_code == 404 and not path.startswith(("/api/", "/static/")) and "text/html" in request.headers.get("accept", ""):
+        return HTMLResponse(seo.not_found_html(), status_code=404)
+    return await default_http_exception_handler(request, exc)

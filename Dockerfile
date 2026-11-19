@@ -9,7 +9,7 @@ WORKDIR /app
 COPY requirements.txt requirements-download.txt ./
 RUN pip install --no-cache-dir -r requirements.txt -r requirements-download.txt
 
-COPY server.py config.py netguard.py scrapling_adapter.py downloader.py agent_bridge.py dj_agent.py ./
+COPY server.py config.py netguard.py scrapling_adapter.py downloader.py agent_bridge.py dj_agent.py seo.py ./
 COPY static ./static
 
 # SYNKLAB_IN_CONTAINER lets the local-only endpoints accept Docker's bridge address.
