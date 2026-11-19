@@ -63,11 +63,11 @@
 .m-nt span{font-size:12px;color:#a9b4ac}
 .m-bul{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12px;color:#d6e4c4}
 .m-bul svg{flex:0 0 auto}
-.m-ctl{display:grid;grid-template-columns:56px 1fr 56px;gap:10px}
+.m-ctl{display:grid;grid-template-columns:56px minmax(0,1fr) 56px;gap:10px}
 .m-sq{height:56px;border-radius:12px;border:1px solid #33403a;background:#131919;color:#edf1e9;display:grid;place-items:center}
 .m-sq.stop{color:#ff8a7e}
 .m-sq:disabled,.m-go:disabled{opacity:.45;cursor:default}
-.m-go{white-space:nowrap;height:56px;border-radius:12px;border:0;background:#caff1a;color:#10160d;display:flex;align-items:center;justify-content:center;gap:10px;font:800 20px 'Barlow Condensed','Arial Narrow',sans-serif;letter-spacing:.4px;text-transform:uppercase}
+.m-go{min-width:0;overflow:hidden;white-space:nowrap;height:56px;border-radius:12px;border:0;background:#caff1a;color:#10160d;display:flex;align-items:center;justify-content:center;gap:10px;font:800 15px 'Barlow Condensed','Arial Narrow',sans-serif;letter-spacing:.6px;text-transform:uppercase}
 .m-xf{padding:14px 16px 16px}
 .m-xfhead{display:flex;justify-content:space-between;font:10px 'DM Mono',monospace;letter-spacing:1.4px;color:#8f9a93}
 .m-xfhead b{font-weight:500;color:#dfe7de}
@@ -151,3 +151,48 @@
 .m-tab.plus span{width:48px;height:48px;border-radius:50%;background:#caff1a;color:#10160d;display:grid;place-items:center;border:3px solid #0b0f0e}
 .m-tab.plus[aria-current="page"] span{border-color:#edf1e9}
 @media (prefers-reduced-motion:reduce){.m-prog i,.m-sw .trk,.m-sw .trk i{transition:none}}
+
+/* Compact dual-deck card: both decks always visible on phones */
+#m-dual{padding:12px 14px}
+#m-dual .m-pct{font:500 15px/1 'DM Mono',monospace;letter-spacing:.5px}
+#m-dual .m-dtitle{margin-top:3px;font-size:19px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#m-dual .m-sub{margin-top:2px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#m-dual .m-bars.small{height:28px;margin-top:6px}
+#m-dual .m-tempo{margin:9px 0}
+#m-dual .m-skiptag{margin-top:4px}
+.m-count{font-size:36px}
+
+#m-dual .m-syncbtn{display:block;width:100%;height:34px;margin:0 0 9px;border:1px solid #33403a;border-radius:9px;background:#10170f;color:#caff1a;font:500 11px 'DM Mono',monospace;letter-spacing:1px}
+#m-dual .m-syncbtn:disabled{opacity:.4}
+
+/* Scrolling waveform lanes (both decks share one time scale) */
+#m-dual .m-wf{display:block;width:100%;height:66px;margin-top:6px;border-radius:8px;background:#0c120f;border:1px solid #1f2a24}
+.m-go svg{width:18px;height:18px}
+
+#m-dual .m-nudge{display:grid;grid-template-columns:1fr repeat(4,48px);gap:6px;align-items:center;margin:0 0 9px}
+#m-dual .m-nudge span{font:500 10px 'DM Mono',monospace;letter-spacing:1px;color:#8f9a93}
+#m-dual .m-nudge button{height:32px;border:1px solid #33403a;border-radius:8px;background:#131919;color:#edf1e9;font:500 12px 'DM Mono',monospace}
+#m-dual .m-nudge button:disabled{opacity:.35}
+
+/* waveform drag, touch crossfader, effects card */
+#m-dual .m-wf{touch-action:pan-y;cursor:grab}
+.m-xftrack{touch-action:none;cursor:pointer}
+#m-dual .m-jump{display:grid;grid-template-columns:1fr repeat(4,46px);gap:6px;align-items:center;margin-top:6px}
+#m-dual .m-jump span{font:500 10px 'DM Mono',monospace;letter-spacing:1px;color:#8f9a93}
+#m-dual .m-jump button{height:28px;border:1px solid #33403a;border-radius:8px;background:#131919;color:#edf1e9;font:500 11px 'DM Mono',monospace}
+#m-dual .m-jump button:disabled{opacity:.35}
+.m-fx{padding:12px 14px}
+.m-fx summary{display:flex;justify-content:space-between;align-items:center;cursor:pointer;list-style:none}
+.m-fx summary::-webkit-details-marker{display:none}
+.m-fxhint{font:10px 'DM Mono',monospace;color:#6f7a72}
+.m-fxdeck{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0 6px}
+.m-fxdeck button{height:32px;border:1px solid #33403a;border-radius:8px;background:#131919;color:#8f9a93;font:500 11px 'DM Mono',monospace;letter-spacing:1px}
+.m-fxdeck button[aria-pressed="true"]{background:#caff1a;border-color:#caff1a;color:#10160d}
+.m-fxrow{display:grid;grid-template-columns:78px minmax(0,1fr) 52px 30px;align-items:center;gap:6px;height:36px}
+.m-fxrow .n{font:500 11px 'DM Mono',monospace;color:#bbc8b5}
+.m-fxrow .v{font:500 11px 'DM Mono',monospace;color:#edf1e9;text-align:right}
+.m-range{width:100%;height:28px;margin:0;accent-color:#caff1a;touch-action:pan-y}
+.m-reset{height:28px;width:28px;border:1px solid #33403a;border-radius:8px;background:#131919;color:#caff1a;font-size:14px;padding:0}
+.m-fxpads{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px}
+.m-fxpads button,.m-fxall{height:34px;border:1px solid #33403a;border-radius:8px;background:#10170f;color:#edf1e9;font:500 11px 'DM Mono',monospace;letter-spacing:1px}
+.m-fxall{display:block;width:100%;margin-top:8px;color:#caff1a}
