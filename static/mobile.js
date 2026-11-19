@@ -50,15 +50,20 @@
     '<div class="m-wave"><div class="m-exit" id="m-exit" hidden><b>SALIDA</b></div><div class="m-bars" id="m-bars"></div></div>' +
     '<div class="m-times"><span id="m-s-cur">0:00</span><span id="m-s-dur">0:00</span></div><div class="m-chips" id="m-s-chips"></div></section>' +
     '<section id="m-dual" class="m-card" aria-label="Los dos decks sonando" hidden>' +
-    '<div class="m-deck"><div class="m-deckhead"><span class="m-eyebrow" id="m-da-tag">DECK A · SALE</span><span class="m-pct" id="m-da-pct">100%</span></div><div class="m-dtitle" id="m-da-title"></div><div class="m-sub" id="m-da-sub"></div><div class="m-bars small" id="m-da-bars"></div></div>' +
-    '<div class="m-tempo" id="m-tempo">TEMPO</div>' +
-    '<div class="m-deck"><div class="m-deckhead"><span class="m-eyebrow" style="color:#9fc43a" id="m-db-tag">DECK B · ENTRA</span><span class="m-pct" style="color:#caff1a" id="m-db-pct">0%</span></div><div class="m-dtitle" id="m-db-title"></div><div class="m-sub" id="m-db-sub"></div><div class="m-bars small" id="m-db-bars"></div><div class="m-skiptag" id="m-db-skip" hidden></div></div></section>' +
+    '<div class="m-deck"><div class="m-deckhead"><span class="m-eyebrow" id="m-da-tag">DECK A · SALE</span><span class="m-pct" id="m-da-pct">100%</span></div><div class="m-dtitle" id="m-da-title"></div><div class="m-sub" id="m-da-sub"></div><canvas class="m-wf" id="m-da-wf" aria-label="Onda del deck que suena"></canvas><div class="m-jump" id="m-da-jump"><span>SALTAR</span><button type="button" data-jump="-16">−16</button><button type="button" data-jump="-4">−4</button><button type="button" data-jump="4">+4</button><button type="button" data-jump="16">+16</button></div></div>' +
+    '<div class="m-tempo" id="m-tempo">TEMPO</div><button type="button" class="m-syncbtn" id="m-sync">SYNC · copiar el BPM del que suena</button><div class="m-nudge" id="m-nudge"><span>FASE DEL QUE ENTRA</span><button type="button" data-nudge="-10">−10</button><button type="button" data-nudge="-2">−2</button><button type="button" data-nudge="2">+2</button><button type="button" data-nudge="10">+10</button></div>' +
+    '<div class="m-deck"><div class="m-deckhead"><span class="m-eyebrow" style="color:#9fc43a" id="m-db-tag">DECK B · ENTRA</span><span class="m-pct" style="color:#caff1a" id="m-db-pct">0%</span></div><div class="m-dtitle" id="m-db-title"></div><div class="m-sub" id="m-db-sub"></div><canvas class="m-wf" id="m-db-wf" aria-label="Onda del deck que entra"></canvas><div class="m-jump" id="m-db-jump"><span>SALTAR</span><button type="button" data-jump="-16">−16</button><button type="button" data-jump="-4">−4</button><button type="button" data-jump="4">+4</button><button type="button" data-jump="16">+16</button></div><div class="m-skiptag" id="m-db-skip" hidden></div></div></section>' +
     '<section id="m-next" class="m-card lime" aria-label="Próxima mezcla" hidden><div class="m-mixhead"><div><div class="m-eyebrow" id="m-n-eye">PRÓXIMA MEZCLA EN</div><div class="m-count" id="m-n-count">0:00</div></div><div class="m-plan" id="m-n-plan"></div></div>' +
     '<div class="m-prog"><i id="m-n-prog"></i></div>' +
     '<div class="m-nexttrack" id="m-n-row"><div class="m-bdg">B</div><div class="m-nt"><b id="m-n-title"></b><span id="m-n-sub"></span></div></div>' +
     '<div id="m-n-bul"></div></section>' +
-    '<div class="m-ctl"><button type="button" class="m-sq" id="m-play" aria-label="Pausar">' + IC.pause + '</button><button type="button" class="m-go" id="m-go">' + IC.swap + '<span id="m-go-l">Iniciar Auto DJ</span></button><button type="button" class="m-sq stop" id="m-stop" aria-label="Detener Auto DJ">' + IC.stop + '</button></div>' +
-    '<section class="m-card m-xf" aria-label="Crossfader"><div class="m-xfhead"><span>CROSSFADER</span><b id="m-xf-l">A 100% · B 0%</b></div><div class="m-xftrack" id="m-xf" role="img" aria-label="Crossfader"><div class="rail"></div><div class="fill" id="m-xf-fill"></div><div class="knob" id="m-xf-knob"></div></div></section>' +
+    '<div class="m-ctl"><button type="button" class="m-sq" id="m-play" aria-label="Pausar">' + IC.pause + '</button><button type="button" class="m-go" id="m-go">' + IC.swap + '<span id="m-go-l">Iniciar Auto DJ</span></button><button type="button" class="m-sq stop" id="m-stop" aria-label="Desactivar Auto DJ">' + IC.stop + '</button></div>' +
+    '<section class="m-card m-xf" aria-label="Crossfader"><div class="m-xfhead"><span>CROSSFADER</span><b id="m-xf-l">A 100% · B 0%</b></div><div class="m-xftrack" id="m-xf" role="slider" aria-valuemin="0" aria-valuemax="100" aria-label="Crossfader"><div class="rail"></div><div class="fill" id="m-xf-fill"></div><div class="knob" id="m-xf-knob"></div></div></section>' +
+    '<details class="m-card m-fx" id="m-fx" open><summary><span class="m-eyebrow">EFECTOS Y EQ</span><span class="m-fxhint">↺ restaura de a poco</span></summary>' +
+    '<div class="m-fxdeck"><button type="button" data-fxdeck="A" aria-pressed="true">DECK A</button><button type="button" data-fxdeck="B" aria-pressed="false">DECK B</button></div>' +
+    '<div id="m-fx-list"></div>' +
+    '<div class="m-fxpads"><button type="button" data-pad="Throw">REVERB THROW</button><button type="button" data-pad="Sweep">SWEEP</button><button type="button" data-pad="Brake">FRENO</button><button type="button" data-pad="EchoOut">ECO OUT</button></div>' +
+    '<button type="button" class="m-fxall" data-fxresetall>↺ RESTAURAR TODOS LOS EFECTOS</button></details>' +
     '<button type="button" class="m-peek" id="m-peek" data-go="cola" hidden><div class="t"><div class="m-eyebrow">DESPUÉS · EN LA COLA</div><b id="m-peek-t"></b></div>' + IC.chev + '</button>' +
     '</main></section>' +
     // ---- Cola
@@ -90,6 +95,8 @@
     '<section class="m-card"><h2 class="m-h2">Efecto en la cola del tema que sale</h2>' + chips('djAutoFX', [['off', 'Ninguno'], ['echo', 'Eco'], ['reverb', 'Reverb'], ['flanger', 'Flanger'], ['random', 'Aleatorio']], 'wrap') + '</section>' +
     '<section class="m-card" style="padding-top:4px;padding-bottom:4px">' +
     sw('djAutoSync', 'Sincronizar tempo y golpes', 'Iguala el tempo y alinea los golpes del tema que entra.') +
+    sw('djCrispRate', 'Audio nítido', 'Sin estiramiento en ajustes de tempo pequeños (≤1.5 %). El tono varía hasta 26 cents.') +
+    sw('djFollowMaster', 'Seguir al tema que suena', 'Sin promedio: el que entra copia el BPM del que está sonando (ej. 127).') +
     sw('djAutoPhrase', 'Mezclar por frases', 'Entra sin intro y sale donde cae la energía.') +
     sw('djAutoFilter', 'Barrido de filtro', 'Cierra los agudos del que sale y abre los del que entra.') +
     sw('djAutoGain', 'Nivelar volúmenes', 'Compensa la diferencia de volumen entre temas.') + '</section>' +
@@ -203,34 +210,23 @@
 
     $('m-empty').hidden = avail.length > 0 || run;
     const t0 = t || avail[0] || null;
-    $('m-single').hidden = !!tr || !t0;
-    $('m-dual').hidden = !tr;
-
-    if (tr) updateDual(tr);
-    else if (t0) {
-      const cur = t ? d.el.currentTime || 0 : 0;
-      const dur = (t && d.el.duration) || durOf(t0);
-      setText('m-s-eye', t ? 'AHORA SUENA · DECK ' + L : 'LISTO PARA MEZCLAR');
-      setText('m-s-title', st(t0) || '—');
-      setText('m-s-sub', (t0.artist || '') + (t0.artist && !t ? ' · ' : '') + (!t ? avail.length + (avail.length === 1 ? ' tema en el set' : ' temas en el set') : ''));
-      setText('m-s-cur', fmt(cur)); setText('m-s-dur', fmt(dur));
-      setHtml('m-s-chips', chipsHtml(t0));
-      paint($('m-bars'), t0, cur, dur, {});
-      const exitAt = t && djAuto.exit && djAuto.exit.id === d.id && djAuto.exit.at != null ? djAuto.exit.at : null;
-      const mk = $('m-exit');
-      mk.hidden = !(exitAt && dur > 0);
-      if (!mk.hidden) mk.style.left = Math.min(100, exitAt / dur * 100) + '%';
-    }
+    // Both decks are always visible (compact) while the set has tracks; with nothing loaded they preview the first two tracks.
+    $('m-single').hidden = true;
+    $('m-dual').hidden = !tr && avail.length === 0;
+    if (!$('m-dual').hidden) updateDual(tr);
 
     updateNext(L, d, t, tr, run);
 
     const go = $('m-go');
-    $('m-go-l').textContent = tr ? 'Mezclando…' : run ? 'Mezclar siguiente' : 'Iniciar Auto DJ';
+    $('m-go-l').textContent = tr ? 'Mezclando…' : run ? 'Mezclar siguiente' : 'Activar Auto DJ';
     go.disabled = !!tr || (!run && avail.length === 0);
-    $('m-play').disabled = !run && !d.id;
+    $('m-play').disabled = !run && !d.id && avail.length === 0;
     const pa = paused ? 'Reproducir' : 'Pausar';
     if ($('m-play').getAttribute('aria-label') !== pa) { $('m-play').setAttribute('aria-label', pa); $('m-play').innerHTML = paused ? IC.play : IC.pause; }
-    $('m-stop').disabled = !run && !d.id;
+    $('m-stop').disabled = !run;
+    { const nb = QA('[data-nudge]', ROOT); nb.forEach((b) => { b.disabled = !tr; }); }
+    syncFx();
+    { const sy = $('m-sync'); if (sy) sy.disabled = !d.id || !!tr; }
 
     const v = +(nativeEl('djCrossfade') || { value: 0 }).value || 0;
     const a = Math.round(Math.cos(v / 100 * Math.PI / 2) * 100), b = Math.round(Math.sin(v / 100 * Math.PI / 2) * 100);
@@ -245,28 +241,171 @@
     if (peek) { const p = nt || avail[1]; setText('m-peek-t', st(p) + (p.bpm ? ' · ' + Number(p.bpm).toFixed(1) + ' BPM' : '')); }
   }
 
+  // ---- Scrolling waveform lanes: both decks share one time scale (real seconds), playhead fixed at the left third, beat/bar
+  // lines from each track's grid. When the two tracks are in sync their beat lines sit at the same x in both lanes.
+  let lanes = null;
+  const WF_SPAN = 14, WF_HEAD = 0.3, smooth = { A: { t: 0, at: 0 }, B: { t: 0, at: 0 } }, hiMax = new Map();
+  function deckTime(L) {
+    if (scrub && scrub.L === L && scrub.pending != null) return scrub.pending; // while dragging, show the finger position, not the lagging media clock
+    const el = djDecks[L].el, now = performance.now(), s = smooth[L], real = el.currentTime || 0;
+    if (el.paused || Math.abs(real - s.t) > 0.4) { s.t = real; s.at = now; return real; }
+    const est = s.t + (now - s.at) / 1000 * (el.playbackRate || 1);
+    s.t = est + (real - est) * 0.08; s.at = now; return s.t; // glide to the media clock instead of stepping with its coarse updates
+  }
+  function nearestAnchor(t, time) { let a = t.grid.anchors[0]; for (const x of t.grid.anchors) if (Math.abs(x.t - time) < Math.abs(a.t - time)) a = x; return a; }
+  function drawLane(cv, L, t, color, active, note) {
+    const dpr = Math.min(2, window.devicePixelRatio || 1), w = cv.clientWidth, h = cv.clientHeight;
+    if (!w || !h) return;
+    if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+    const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+    const d = djDecks[L], loaded = !!(t && d.id === t.id), rate = loaded ? (d.el.playbackRate || 1) : 1;
+    const hi = t && typeof djPeaksHi !== 'undefined' ? djPeaksHi.get(t.id) : null, headX = w * WF_HEAD, pps = w / WF_SPAN, mid = h / 2;
+    if (!hi) { g.fillStyle = '#6f7a72'; g.font = "10px 'DM Mono',monospace"; g.fillText(t ? 'La onda se carga al acercarse la mezcla' : '', 8, mid + 3); return; }
+    let mx = hiMax.get(t.id); if (!mx) { mx = 0.05; for (let i = 0; i < hi.length; i += 3) if (hi[i] > mx) mx = hi[i]; hiMax.set(t.id, mx); }
+    const cur = loaded ? deckTime(L) : (lanes && lanes.entry) || 0, tStart = cur - headX / pps * rate, tEnd = cur + (w - headX) / pps * rate;
+    for (let x = 0; x < w; x += 2) { // waveform: each 2px column covers a slice of track time at the current playback rate
+      const t0 = cur + (x - headX) / pps * rate, t1 = t0 + 2 / pps * rate;
+      if (t1 < 0 || t0 > hi.length / 100) continue;
+      let p = 0; for (let i = Math.max(0, Math.floor(t0 * 100)), e = Math.min(hi.length - 1, Math.ceil(t1 * 100)); i <= e; i++) if (hi[i] > p) p = hi[i];
+      const a = Math.max(1, Math.min(1, p / mx) * (h * 0.46));
+      g.fillStyle = x < headX ? (active ? '#5d6b62' : '#3a443e') : color;
+      g.fillRect(x, mid - a, 1.6, a * 2);
+    }
+    if (t.grid && djGridOK(t)) { // beat lines (every 4th, the bar, is brighter)
+      const per = 60 / t.grid.bpm, a0 = t.grid.anchors[0].ph; let time = tStart;
+      for (let n = 0; n < 80; n++) {
+        const a = nearestAnchor(t, time), idx = Math.ceil((time - a.ph) / per - 1e-6), bt = a.ph + idx * per;
+        if (bt > tEnd) break;
+        const x = headX + (bt - cur) / rate * pps, bar = ((Math.round((bt - a0) / per) % 4) + 4) % 4 === 0;
+        g.fillStyle = bar ? 'rgba(255,255,255,.55)' : 'rgba(255,255,255,.2)'; g.fillRect(x - 0.5, bar ? 0 : h * 0.25, bar ? 1.5 : 1, bar ? h : h * 0.5);
+        time = bt + per * 0.5;
+      }
+    }
+    g.fillStyle = '#ffffff'; g.fillRect(headX - 1, 0, 2, h); // playhead
+    if (note) { g.fillStyle = 'rgba(8,12,10,.7)'; g.fillRect(w - 78, 3, 74, 14); g.fillStyle = '#caff1a'; g.font = "9px 'DM Mono',monospace"; g.fillText(note, w - 74, 13); }
+  }
+  // ---- Drag a waveform to move the track (drag left = forward, like grabbing the wave); jump buttons move by beats.
+  let scrub = null;
+  function beatJump(L, n) {
+    const d = djDecks[L], t = d.id ? djTrack(d.id) : null; if (!t) return;
+    const bpm = (typeof djBpmFor === 'function' ? djBpmFor(t) : t.bpm) || t.bpm;
+    if (!bpm || !(d.el.duration > 0)) return;
+    if (djAuto.transition && djAuto.transition.to === L) djAuto.transition.lock = false; // manual move wins over the phase lock
+    d.el.currentTime = Math.max(0, Math.min(d.el.duration - 0.05, (d.el.currentTime || 0) + n * 60 / bpm));
+  }
+  ['m-da-wf', 'm-db-wf'].forEach((id) => {
+    const cv = $(id);
+    cv.addEventListener('pointerdown', (e) => {
+      if (!lanes) return;
+      const L = id === 'm-da-wf' ? lanes.fromL : lanes.toL, d = djDecks[L];
+      if (!d.id || !(d.el.duration > 0)) return;
+      cv.setPointerCapture(e.pointerId);
+      scrub = { cv, L, x: e.clientX, t0: d.el.currentTime || 0, rate: d.el.playbackRate || 1, last: 0, pending: null };
+      if (djAuto.transition && djAuto.transition.to === L) djAuto.transition.lock = false;
+    });
+    cv.addEventListener('pointermove', (e) => {
+      if (!scrub || scrub.cv !== cv) return;
+      const d = djDecks[scrub.L], pps = cv.clientWidth / WF_SPAN, now = performance.now();
+      const nt = Math.max(0, Math.min((d.el.duration || 0) - 0.05, scrub.t0 - (e.clientX - scrub.x) / pps * scrub.rate));
+      scrub.pending = nt;
+      if (now - scrub.last > 40) { d.el.currentTime = nt; scrub.last = now; }
+    });
+    const end = () => { if (scrub && scrub.cv === cv) { if (scrub.pending != null) djDecks[scrub.L].el.currentTime = scrub.pending; scrub = null; } };
+    cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+  });
+
+  // ---- Crossfader: drag anywhere on the track (touching it hands control to you, like on desktop: Auto DJ switches off).
+  const xfEl = $('m-xf');
+  function xfMove(e) {
+    const r = xfEl.getBoundingClientRect(), v = Math.max(0, Math.min(100, (e.clientX - r.left - 14) / Math.max(1, r.width - 28) * 100));
+    const el = nativeEl('djCrossfade'); if (!el) return;
+    el.value = String(Math.round(v)); el.dispatchEvent(new Event('input', { bubbles: true })); updateMix();
+  }
+  xfEl.addEventListener('pointerdown', (e) => { xfEl.setPointerCapture(e.pointerId); xfEl._drag = true; xfMove(e); });
+  xfEl.addEventListener('pointermove', (e) => { if (xfEl._drag) xfMove(e); });
+  xfEl.addEventListener('pointerup', () => { xfEl._drag = false; }); xfEl.addEventListener('pointercancel', () => { xfEl._drag = false; });
+
+  // ---- Effects & EQ: mirrors the desktop controls of one deck (the native inputs stay the source of truth).
+  const FXS = [['Rate', 'Tempo'], ['Hp', 'Pasa-altos'], ['Lp', 'Pasa-bajos'], ['Low', 'Graves'], ['Mid', 'Medios'], ['High', 'Agudos'], ['Echo', 'Eco'], ['Reverb', 'Reverb'], ['Flanger', 'Flanger']];
+  let fxDeck = 'A', fxAuto = true, fxDrag = false, fxBuilt = false;
+  function buildFx() {
+    const ref = nativeEl('djEchoA'); if (!ref) return;
+    $('m-fx-list').innerHTML = FXS.map(([n, label]) => {
+      const el = nativeEl('dj' + n + 'A');
+      return '<div class="m-fxrow" data-fx="' + n + '"><span class="n">' + label + '</span><input type="range" class="m-range" data-fxin="' + n + '" min="' + el.min + '" max="' + el.max + '" step="' + (el.step || '1') + '" value="' + el.value + '"><b class="v">0</b><button type="button" class="m-reset" data-fxreset="' + n + '" aria-label="Restaurar ' + label + ' de a poco">↺</button></div>';
+    }).join('');
+    fxBuilt = true;
+  }
+  function syncFx(force) {
+    if (!fxBuilt) buildFx();
+    if (!fxBuilt) return;
+    if (fxAuto && djAuto.active) fxDeck = djAuto.active;
+    QA('[data-fxdeck]', ROOT).forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.fxdeck === fxDeck)));
+    FXS.forEach(([n]) => {
+      const nat = nativeEl('dj' + n + fxDeck), r = ROOT.querySelector('[data-fxin="' + n + '"]'), v = ROOT.querySelector('[data-fx="' + n + '"] .v'), lab = nativeEl('dj' + n + 'Val' + fxDeck);
+      if (!nat || !r) return;
+      if (!fxDrag || force) r.value = nat.value;
+      if (v && lab && v.textContent !== lab.textContent) v.textContent = lab.textContent;
+    });
+  }
+  ROOT.addEventListener('input', (e) => {
+    const r = e.target.closest && e.target.closest('[data-fxin]'); if (!r) return;
+    const nat = nativeEl('dj' + r.dataset.fxin + fxDeck); if (!nat) return;
+    clearInterval(nat._anim); nat._anim = null; // a finger on the control cancels any glide in progress
+    nat.value = r.value; nat.dispatchEvent(new Event('input', { bubbles: true })); syncFx();
+  });
+  ROOT.addEventListener('pointerdown', (e) => { if (e.target.closest && e.target.closest('[data-fxin]')) fxDrag = true; });
+  document.addEventListener('pointerup', () => { fxDrag = false; }); document.addEventListener('pointercancel', () => { fxDrag = false; });
+  ROOT.addEventListener('contextmenu', (e) => { const row = e.target.closest && e.target.closest('[data-fx]'); if (row) { e.preventDefault(); djResetFX(fxDeck, row.dataset.fx); } }); // long-press
+
+  function wfLoop() {
+    const dual = $('m-dual');
+    if (lanes && dual && !dual.hidden && !document.hidden && dual.offsetParent !== null) {
+      const { fromL, toL, tf, tt, tr } = lanes;
+      drawLane($('m-da-wf'), fromL, tf, '#e4ebe0', true, null);
+      drawLane($('m-db-wf'), toL, tt, '#caff1a', !!tr, !tr || !djDecks[toL].id ? 'ENTRA AQUÍ' : null);
+    }
+    requestAnimationFrame(wfLoop);
+  }
+  requestAnimationFrame(wfLoop);
+
   function updateDual(tr) {
-    const from = djDecks[tr.from], to = djDecks[tr.to];
-    const tf = from.id ? djTrack(from.id) : null, tt = to.id ? djTrack(to.id) : null;
-    const v = +(nativeEl('djCrossfade') || { value: 0 }).value || 0;
-    const cosV = Math.cos(v / 100 * Math.PI / 2), sinV = Math.sin(v / 100 * Math.PI / 2);
-    const pa = Math.round((tr.from === 'A' ? cosV : sinV) * 100), pb = Math.round((tr.to === 'B' ? sinV : cosV) * 100);
-    setText('m-da-tag', 'DECK ' + tr.from + ' · SALE'); setText('m-da-pct', pa + '%');
-    setText('m-db-tag', 'DECK ' + tr.to + ' · ENTRA'); setText('m-db-pct', pb + '%');
+    const act = activeInfo();
+    const fromL = tr ? tr.from : act.L, toL = tr ? tr.to : (act.L === 'A' ? 'B' : 'A');
+    const from = djDecks[fromL], to = djDecks[toL];
+    let tf = from.id ? djTrack(from.id) : null;
+    const loaded = !!tf;
+    if (!tf && !tr) tf = djAvailable()[0] || null; // nothing loaded yet: preview the first track
+    let tt = to.id ? djTrack(to.id) : null;
+    // Outside a transition the idle deck shows what comes next (preloaded, or just queued: not loaded yet).
+    if (!tr && !tt && tf) tt = djNextTrack(tf.id) || (!loaded ? djAvailable()[1] : null) || null;
+    const fe = from.el, te = to.el;
+    const fdur = (from.id && fe.duration) || durOf(tf), tdur = (to.id && te.duration) || durOf(tt);
+    if (tr) {
+      const v = +(nativeEl('djCrossfade') || { value: 0 }).value || 0;
+      const cosV = Math.cos(v / 100 * Math.PI / 2), sinV = Math.sin(v / 100 * Math.PI / 2);
+      const pa = Math.round((tr.from === 'A' ? cosV : sinV) * 100), pb = Math.round((tr.to === 'B' ? sinV : cosV) * 100);
+      setText('m-da-tag', 'DECK ' + fromL + ' · SALE'); setText('m-da-pct', pa + '%');
+      setText('m-db-tag', 'DECK ' + toL + ' · ENTRA'); setText('m-db-pct', pb + '%');
+    } else {
+      setText('m-da-tag', 'DECK ' + fromL + (!loaded ? ' · LISTO' : fe.paused ? ' · EN PAUSA' : ' · SUENA')); setText('m-da-pct', fmt(loaded ? fe.currentTime || 0 : 0) + ' / ' + fmt(fdur));
+      setText('m-db-tag', 'DECK ' + toL + (to.id ? ' · LISTO' : ' · SIGUE')); setText('m-db-pct', tt ? fmt(tdur) : '—');
+    }
     setText('m-da-title', st(tf)); setText('m-db-title', st(tt));
     const sub = (t) => t ? [t.artist, t.bpm ? Number(t.bpm).toFixed(1) + ' BPM' : '', t.key].filter(Boolean).join(' · ') : '';
     setText('m-da-sub', sub(tf)); setText('m-db-sub', sub(tt));
-    const fe = from.el, te = to.el;
-    paint($('m-da-bars'), tf, fe.currentTime || 0, fe.duration || durOf(tf), {});
-    if (tr.entry == null) tr.entry = Math.max(0, (te.currentTime || 0) - (performance.now() - tr.start) / 1000 * (te.playbackRate || 1));
-    paint($('m-db-bars'), tt, te.currentTime || 0, te.duration || durOf(tt), { head: '#caff1a', past: '#7f9a3a', skipUntil: tr.entry });
+    if (tr && tr.entry == null) tr.entry = Math.max(0, (te.currentTime || 0) - (performance.now() - tr.start) / 1000 * (te.playbackRate || 1));
+    const entry = tr ? tr.entry : 0;
+    lanes = { fromL, toL, tf, tt, tr, loadedFrom: loaded, entry };
+    QA('#m-da-jump button', ROOT).forEach((b) => { b.disabled = !from.id; }); QA('#m-db-jump button', ROOT).forEach((b) => { b.disabled = !to.id; });
     const sk = $('m-db-skip');
-    sk.hidden = !(tr.entry > 1);
-    if (!sk.hidden) sk.textContent = 'INTRO SALTEADO · ENTRA EN ' + fmt(tr.entry);
+    sk.hidden = !(entry > 1);
+    if (!sk.hidden) sk.textContent = 'INTRO SALTEADO · ENTRA EN ' + fmt(entry);
     let tempo = 'TEMPO';
     if (tf && tt && tf.bpm && tt.bpm) {
       const bf = typeof djBpmFor === 'function' ? djBpmFor(tf) : tf.bpm, bt = typeof djBpmFor === 'function' ? djBpmFor(tt) : tt.bpm;
-      tempo = 'TEMPO · ' + (Math.abs(fe.playbackRate * bf - te.playbackRate * bt) < 0.6 ? 'AMBOS A ' + (te.playbackRate * bt).toFixed(1) + ' BPM' : bf.toFixed(1) + ' → ' + bt.toFixed(1) + ' BPM');
+      const ph = tr && tr.lock && tr.err != null && tf && tf.grid ? Math.round(tr.err * 60 / tf.grid.bpm * 1000) : null; // beat phase error of the incoming deck, ms
+      tempo = 'TEMPO · ' + (tr && Math.abs(fe.playbackRate * bf - te.playbackRate * bt) < 0.6 ? 'AMBOS A ' + (te.playbackRate * bt).toFixed(1) + ' BPM' : bf.toFixed(1) + ' → ' + bt.toFixed(1) + ' BPM') + (ph != null ? ' · FASE ' + (ph > 0 ? '+' : '') + ph + ' ms' : '');
     }
     setText('m-tempo', tempo);
   }
@@ -450,6 +589,12 @@
     const t = e.target.closest('button');
     if (!t || !ROOT.contains(t)) return;
     if (t.dataset.go) return go(t.dataset.go);
+    if (t.dataset.nudge) { djNudgePhase(+t.dataset.nudge); return; }
+    if (t.dataset.jump) { const L = lanes ? (t.closest('.m-jump').id === 'm-da-jump' ? lanes.fromL : lanes.toL) : null; if (L) beatJump(L, +t.dataset.jump); return; }
+    if (t.dataset.fxdeck) { fxDeck = t.dataset.fxdeck; fxAuto = false; syncFx(true); return; }
+    if (t.dataset.fxreset) { djResetFX(fxDeck, t.dataset.fxreset); return; }
+    if (t.hasAttribute('data-fxresetall')) { djResetAllFX(fxDeck); return; }
+    if (t.dataset.pad) { const b = nativeEl('dj' + t.dataset.pad + fxDeck); if (b) b.click(); return; }
     if (t.dataset.sw) { const el = nativeEl(t.dataset.sw); if (el) setNative(t.dataset.sw, !el.checked); return update(); }
     if (t.dataset.sel === 'prov') { prov.v = t.dataset.val; store.set('synklab.m.prov', prov.v); return update(); }
     if (t.dataset.sel) { setNative(t.dataset.sel, t.dataset.val); return update(); }
@@ -457,7 +602,8 @@
     if (t.dataset.mv) return move(t.dataset.mv, +t.dataset.dir);
     switch (t.id) {
       case 'm-go': { const run = djAuto.enabled; (nativeEl(run ? 'djNext' : 'djStart') || {}).click && nativeEl(run ? 'djNext' : 'djStart').click(); break; }
-      case 'm-play': { const L = djAuto.active; const b = nativeEl('djPlay' + L); if (b) b.click(); break; }
+      case 'm-play': { const L = djAuto.active; if (!djAuto.enabled && !djDecks[L].id) { const st0 = nativeEl('djStart'); if (st0) st0.click(); break; } const b = nativeEl('djPlay' + L); if (b) b.click(); break; } // nothing loaded: play = start the set
+      case 'm-sync': djSyncNext(); break;
       case 'm-stop': { const b = nativeEl('djStop'); if (b) b.click(); break; }
       case 'm-pick': { const f = nativeEl('djFileInput'); if (f) f.click(); break; }
       case 'm-sort': sortSet(); break;

@@ -17,6 +17,9 @@ SYNK//LAB es un prototipo local con diseño *Dark Lime Cyberpunk*, hecho con HTM
 
 - **Dos decks de Web Audio** con crossfader, filtros pasa-altos y pasa-bajos, EQ de 3 bandas, eco, reverb, flanger, pads de rendimiento (reverb throw, brake, sweep), loops por beats, hot cues, beat jump, nudge, EQ kill, key lock y grabación del master.
 - **Mezcla automática con criterio:** cada transición aplica un EQ automático (intercambio de graves o mezcla) y un efecto, más el barrido de filtro y la aproximación de tempo.
+- **Tempo gradual y modos de sync:** en los últimos ~40 s del tema que suena, ambos temas se acercan al BPM medio (127 y 129 → 128) en vez de saltar al empezar la mezcla. Con **Seguir al tema que suena** (o el botón SYNC para una sola mezcla) el que entra copia el BPM del que suena, sin promedio.
+- **Efectos con reset gradual:** clic derecho sobre cualquier control (en móvil, el botón ↺) lo devuelve a su valor por defecto de a poco, no de golpe.
+- **Análisis fuera del hilo principal:** BPM, rejilla, tonalidad y secciones corren en Web Workers, así que la mezcla ya no se traba mientras se analiza. Hay una opción **Audio nítido** (sin estiramiento en ajustes de tempo ≤1,5 %).
 - **Alineación de golpes:** estima la rejilla del bombo de cada tema (BPM refinado y fase), empieza el tema entrante en la próxima barra del saliente y lo corrige en fase con pequeños ajustes de velocidad.
 - **Tempo en el promedio:** si dos temas tienen BPM cercanos (por ejemplo 127 y 129), ambos se encuentran en el promedio (128).
 - **Mezcla por frases:** el tema que entra salta su intro y el que sale se funde donde la energía cae, sin esperar al final. [Ver cómo](#mezcla-por-frases).
@@ -24,7 +27,7 @@ SYNK//LAB es un prototipo local con diseño *Dark Lime Cyberpunk*, hecho con HTM
 - **Agente de IA opcional:** una CLI donde ya tienes sesión (Claude o Codex) decide duración, EQ, efecto y filtro de cada transición. No usa claves de API. [Ver flujo](#flujo-del-agente).
 - **Catálogo:** búsqueda de metadatos en MusicBrainz (por texto, no por sonido), sellos y lanzamientos.
 - **Descarga opcional** de enlaces de YouTube o SoundCloud con `yt-dlp` y `ffmpeg`, siempre por orden tuya y solo en local.
-- **Versión móvil** (hasta 770 px): interfaz propia con cinco pantallas (Mezcla, Cola, Importar, Agente y Ajustes) pensada para usarse con una mano. Durante una mezcla se ven los dos decks a la vez. Descubrir, Analizador, Sets y Sellos siguen disponibles desde *Ajustes › Más herramientas*.
+- **Versión móvil** (hasta 770 px): interfaz propia con cinco pantallas (Mezcla, Cola, Importar, Agente y Ajustes) pensada para usarse con una mano. Los dos decks se ven siempre, con ondas ampliadas que se desplazan y marcas de golpe en la misma escala de tiempo; arrastra una onda (o usa los saltos por beats) para mover el tema, y hay crossfader táctil, ajuste manual de fase durante la mezcla y una tarjeta de **Efectos y EQ** por deck. Descubrir, Analizador, Sets y Sellos siguen disponibles desde *Ajustes › Más herramientas*.
 - Sin cuentas ni base de datos. El set se guarda en el navegador y se exporta como JSON o CSV.
 
 > Los archivos de audio se procesan **en tu navegador** y nunca se suben a ningún servidor.
@@ -69,7 +72,7 @@ Abre http://localhost:8000. Sin `yt-dlp` y `ffmpeg` el botón de descarga queda 
 
 ## Cómo se usa
 
-1. Abre la app, importa tus temas y pulsa **Iniciar Auto DJ**. Con **Analizar y ordenar todo antes de empezar** activado (viene marcado), antes de arrancar se analiza y ordena el set.
+1. Abre la app, importa tus temas y pulsa **Activar Auto DJ**. Activar o desactivar el Auto DJ no reinicia ni reordena lo que ya está sonando (solo arranca desde cero si no hay nada cargado). Con **Analizar y ordenar todo antes de empezar** activado (viene marcado), antes de arrancar se analiza y ordena el set.
 2. Ajusta lo que quieras: **Duración de transición**, EQ, efecto, **Sincronizar tempo y golpes** y **Mezclar por frases**.
 3. **(Opcional) Agente de IA.** Marca **Permitir control por agente** en el panel Auto DJ y, en otra terminal:
 
