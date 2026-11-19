@@ -132,5 +132,70 @@ class ErrorTests(unittest.TestCase):
         self.assertEqual(client.get("/static/mixer.js").status_code, 200)
 
 
+def words(html: str) -> int:
+    return len(re.sub(r"<[^>]+>", " ", html).split())
+
+
+class ContentTests(unittest.TestCase):
+    def test_every_page_has_a_substantial_article_without_extra_h1(self):
+        for page in seo.PAGES:
+            with self.subTest(view=page.view):
+                body = seo.content(page.view)
+                self.assertIsNotNone(body)
+                self.assertGreaterEqual(words(body), 450)
+                self.assertNotIn("<h1", body)
+                self.assertGreaterEqual(body.count("<h2>"), 4)
+                self.assertIn("<h3>", body)  # the questions section
+
+    def test_a_page_ships_only_its_own_article(self):
+        firsts = {p.view: re.search(r"<h2>(.*?)</h2>", seo.content(p.view)).group(1) for p in seo.PAGES}
+        for page in seo.PAGES:
+            with self.subTest(path=page.path):
+                html = client.get(page.path).text
+                self.assertIn(f"<h2>{firsts[page.view]}</h2>", html)
+                for other, heading in firsts.items():
+                    if other != page.view:
+                        self.assertNotIn(f"<h2>{heading}</h2>", html)
+
+    def test_articles_do_not_repeat_each_other(self):
+        seen = {}
+        for page in seo.PAGES:
+            for para in re.findall(r"<p>(.*?)</p>", seo.content(page.view), re.S):
+                self.assertNotIn(para, seen, f"paragraph repeated in {page.view} and {seen.get(para)}")
+                seen[para] = page.view
+
+    def test_internal_links_in_articles_point_at_real_pages(self):
+        paths = {p.path for p in seo.PAGES}
+        for page in seo.PAGES:
+            with self.subTest(view=page.view):
+                links = re.findall(r'href="([^"]+)"', seo.content(page.view))
+                self.assertTrue(links)
+                for href in links:
+                    self.assertIn(href, paths)
+                self.assertNotIn(page.path, links, "an article should not link to itself")
+
+    def test_fragment_is_served_for_tab_switches_but_not_indexed(self):
+        r = client.get("/contenido/analyze")
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.headers["x-robots-tag"], "noindex")
+        self.assertTrue(r.text.startswith("<article>"))
+        self.assertEqual(client.head("/contenido/sets").status_code, 200)
+        self.assertEqual(client.get("/contenido/nope").status_code, 404)
+        self.assertEqual(client.get("/contenido/..%2Fserver").status_code, 404)
+        self.assertIn("Disallow: /contenido/", client.get("/robots.txt").text)
+
+    def test_the_analyzer_page_delivers_what_its_title_promises(self):
+        analyze = next(p for p in seo.PAGES if p.view == "analyze")
+        html = client.get(analyze.path).text
+        self.assertIn("tonalidad", analyze.title.lower())
+        self.assertIn('id="keyVal"', html)  # the key readout exists
+        self.assertNotIn("KEY AUTOMÁTICA: PENDIENTE", html)
+        self.assertNotIn("La tonalidad no se infiere", html)
+
+    def test_the_article_does_not_claim_a_measured_accuracy(self):
+        for page in seo.PAGES:
+            self.assertNotRegex(seo.content(page.view), r"\d+\s?%\s+de\s+precisi")
+
+
 if __name__ == "__main__":
     unittest.main()
